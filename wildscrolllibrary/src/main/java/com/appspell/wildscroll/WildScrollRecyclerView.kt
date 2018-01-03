@@ -8,7 +8,6 @@ import android.graphics.Rect
 import android.graphics.Typeface
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.view.GestureDetector
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 
@@ -86,33 +85,21 @@ class WildScrollRecyclerView : RecyclerView {
         }
     }
 
-    private var mGestureDetector: GestureDetector? = null
     override fun onTouchEvent(ev: MotionEvent): Boolean {
 
-        fastScroll.sections = sections
-//        if (fastScroll.onTouchEvent(ev)) {
-//            return true
-//        }
-
-//        if (mGestureDetector == null) {
-//            mGestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
-//
-//                override fun onFling(e1: MotionEvent, e2: MotionEvent,
-//                                     velocityX: Float, velocityY: Float): Boolean {
-//                    return super.onFling(e1, e2, velocityX, velocityY)
-//                }
-//
-//            })
-//        }
-//        mGestureDetector!!.onTouchEvent(ev)
+        fastScroll.sections = sections //TODO
+        if (fastScroll.onTouchEvent(ev)) {
+            return true
+        }
 
         return super.onTouchEvent(ev)
     }
 
-
-//    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean =
-//            if (showSections && fastScroll.contains(ev.x, ev.y)) true
-//            else super.onInterceptTouchEvent(ev)
+    override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        fastScroll.sections = sections //TODO
+        return if (showSections && fastScroll.onInterceptTouchEvent(ev)) true
+        else super.onInterceptTouchEvent(ev)
+    }
 
     override fun setAdapter(adapter: Adapter<*>?) {
         adapter?.registerAdapterDataObserver(DataObserver())
@@ -122,12 +109,14 @@ class WildScrollRecyclerView : RecyclerView {
     private fun refreshSectionsUI(width: Int, height: Int) {
         sections.changeSize(width, height, textSelectedPaint.textSize)
 
-        if (textPaint.textSize > sections.height) {
-            textPaint.textSize = sections.height
-        }
+        if (sections.height > 0) {
+            if (textPaint.textSize > sections.height) {
+                textPaint.textSize = sections.height
+            }
 
-        if (textSelectedPaint.textSize > sections.height) {
-            textSelectedPaint.textSize = sections.height
+            if (textSelectedPaint.textSize > sections.height) {
+                textSelectedPaint.textSize = sections.height
+            }
         }
 
         with(sectionsRect) {

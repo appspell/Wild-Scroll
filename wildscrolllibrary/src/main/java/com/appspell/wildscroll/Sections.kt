@@ -36,4 +36,11 @@ class Sections {
 
         offsetY = height
     }
+
+    fun contains(x: Float, y: Float): Boolean {
+        return x >= offsetX &&
+                x <= offsetX + width &&
+                y >= offsetY &&
+                y <= height * sections.size
+    }
 }

@@ -10,28 +10,27 @@ class FastScroll {
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
-            MotionEvent.ACTION_DOWN ->
-                if (contains(ev.x, ev.y)) {
+            MotionEvent.ACTION_UP ->
+                if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
                     recyclerView!!.smoothScrollToPosition(scroll)
+                    recyclerView!!.invalidate() //TODO implement fast scroll as a separate view
                     return true
                 }
-            MotionEvent.ACTION_MOVE -> {
-                if (contains(ev.x, ev.y)) {
+
+            MotionEvent.ACTION_MOVE ->
+                if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
                     recyclerView!!.smoothScrollToPosition(scroll)
+                    recyclerView!!.invalidate() //TODO implement fast scroll as a separate view
+                    return true
                 }
-                return true
-            }
         }
         return false
     }
 
-    fun contains(x: Float, y: Float): Boolean {
-        return x >= sections!!.offsetX &&
-                x <= sections!!.offsetX + sections!!.width &&
-                y >= sections!!.offsetY &&
-                y <= sections!!.height * sections!!.sections.size
+    fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
+        return sections!!.contains(ev.x, ev.y)
     }
 
     private fun getScroll(y: Float): Int {
