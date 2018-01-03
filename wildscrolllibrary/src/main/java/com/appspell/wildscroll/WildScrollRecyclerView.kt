@@ -65,23 +65,6 @@ class WildScrollRecyclerView : RecyclerView {
         }
     }
 
-//    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
-//
-//        val desiredWidth = textSelectedPaint.textSize.toInt()
-//
-//        val widthMode = View.MeasureSpec.getMode(widthMeasureSpec)
-//        val widthSize = View.MeasureSpec.getSize(widthMeasureSpec)
-//        var width = 0
-//
-//        when (widthMode) {
-//            MeasureSpec.EXACTLY -> width = widthSize
-//            MeasureSpec.AT_MOST -> width = Math.min(desiredWidth, widthSize)
-//            MeasureSpec.UNSPECIFIED -> width = desiredWidth
-//        }
-//
-//        setMeasuredDimension(width, heightMeasureSpec)
-//    }
-
     override fun onSizeChanged(width: Int, height: Int, oldw: Int, oldh: Int) {
         refreshSectionsUI(width, height)
         super.onSizeChanged(width, height, oldw, oldh)
@@ -107,9 +90,9 @@ class WildScrollRecyclerView : RecyclerView {
     override fun onTouchEvent(ev: MotionEvent): Boolean {
 
         fastScroll.sections = sections
-        if (fastScroll.onTouchEvent(ev)) {
-            return true
-        }
+//        if (fastScroll.onTouchEvent(ev)) {
+//            return true
+//        }
 
 //        if (mGestureDetector == null) {
 //            mGestureDetector = GestureDetector(context, object : SimpleOnGestureListener() {
