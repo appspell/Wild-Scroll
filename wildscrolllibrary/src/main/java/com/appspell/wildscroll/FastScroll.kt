@@ -1,28 +1,30 @@
 package com.appspell.wildscroll
 
-import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.MotionEvent
 
 class FastScroll {
 
     var sections: Sections? = null
-    var recyclerView: RecyclerView? = null
+    var recyclerView: WildScrollRecyclerView? = null
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
             MotionEvent.ACTION_UP ->
                 if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
+                    Log.d("FASTSCROLL", "UP Scroll = $scroll")
                     recyclerView!!.smoothScrollToPosition(scroll)
-                    recyclerView!!.invalidate() //TODO implement fast scroll as a separate view
+                    recyclerView!!.invalidateSectionBar()
                     return true
                 }
 
             MotionEvent.ACTION_MOVE ->
                 if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
+                    Log.d("FASTSCROLL", "Move Scroll = $scroll")
                     recyclerView!!.smoothScrollToPosition(scroll)
-                    recyclerView!!.invalidate() //TODO implement fast scroll as a separate view
+                    recyclerView!!.invalidateSectionBar()
                     return true
                 }
         }
@@ -42,7 +44,9 @@ class FastScroll {
         val scrollProgress = y / recyclerView!!.height
         val sectionIndex = getSelectionSectionIndex(y)
 
-        sections!!.section = sectionIndex
+        sections!!.selected = sectionIndex
+        Log.d("FASTSCROLL", "Selected = ${sections!!.sections[sections!!.selected]}")
+
 
         return (recyclerView!!.adapter.itemCount * scrollProgress).toInt()
     }

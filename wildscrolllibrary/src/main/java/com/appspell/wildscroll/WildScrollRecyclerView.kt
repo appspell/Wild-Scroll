@@ -2,12 +2,13 @@ package com.appspell.wildscroll
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 
@@ -26,12 +27,18 @@ class WildScrollRecyclerView : RecyclerView {
     private val sectionsPaint = Paint()
     private val sectionsRect = Rect()
 
+
     init {
-        val textColor = Color.LTGRAY
-        val textSelectedColor = Color.RED
+
+        val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
+        val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
+        val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.ripple_material_light, null) //FIXME
 
         val size = context.resources.getDimension(R.dimen.notification_action_text_size) //FIXME
         val selectedSize = context.resources.getDimension(R.dimen.notification_action_text_size)//FIXME
+
+        val paddingLeft = context.resources.getDimension(R.dimen.abc_button_padding_horizontal_material)//FIXME
+        val paddingRight = context.resources.getDimension(R.dimen.abc_button_padding_horizontal_material)//FIXME
 
         val textTypeFace = Typeface.DEFAULT
         val textSelectedTypeFace = Typeface.DEFAULT
@@ -51,11 +58,13 @@ class WildScrollRecyclerView : RecyclerView {
         }
 
         with(sectionsPaint) {
-            color = Color.BLACK
+            color = backgroundColor
         }
 
         with(sections) {
-            this.section = 1
+            this.selected = 1
+            this.paddingLeft = paddingLeft
+            this.paddingRight = paddingRight
         }
 
         with(fastScroll) {
@@ -69,17 +78,25 @@ class WildScrollRecyclerView : RecyclerView {
         super.onSizeChanged(width, height, oldw, oldh)
     }
 
-    override fun onDraw(canvas: Canvas?) {
-        super.onDraw(canvas)
+    override fun onDraw(c: Canvas?) {
+        super.onDraw(c)
+
+        Log.d("FASTSCROLL", "onDraw")
+    }
+
+    override fun draw(canvas: Canvas?) {
+        super.draw(canvas)
+
+        Log.d("FASTSCROLL", "Draw")
 
         canvas!!
         if (showSections) {
             canvas.drawRect(sectionsRect, sectionsPaint)
 
             sections.sections.forEachIndexed { index, section ->
-                when (sections.section == index) {
-                    true -> canvas.drawText(section, sections.offsetX, sections.offsetY + index * sections.height, textSelectedPaint)
-                    false -> canvas.drawText(section, sections.offsetX, sections.offsetY + index * sections.height, textPaint)
+                when (sections.selected == index) {
+                    true -> canvas.drawText(section, sections.left + sections.paddingLeft, sections.top + index * sections.height, textSelectedPaint)
+                    false -> canvas.drawText(section, sections.left + sections.paddingLeft, sections.top + index * sections.height, textPaint)
                 }
             }
         }
@@ -106,6 +123,10 @@ class WildScrollRecyclerView : RecyclerView {
         super.setAdapter(adapter)
     }
 
+    fun invalidateSectionBar() {
+        invalidate(sectionsRect)
+    }
+
     private fun refreshSectionsUI(width: Int, height: Int) {
         sections.changeSize(width, height, textSelectedPaint.textSize)
 
@@ -120,8 +141,8 @@ class WildScrollRecyclerView : RecyclerView {
         }
 
         with(sectionsRect) {
-            left = sections.offsetX.toInt()
-            right = (sections.offsetX + sections.width).toInt()
+            left = sections.left.toInt()
+            right = (sections.left + sections.width).toInt()
             top = 0
             bottom = height
         }

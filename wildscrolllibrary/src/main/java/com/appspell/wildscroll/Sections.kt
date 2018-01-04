@@ -8,39 +8,42 @@ class Sections {
         const val UNSELECTED = -1;
     }
 
-    var offsetX = 0f
-    var offsetY = 0f
+    var left = 0f
+    var top = 0f
     var width = 0f
     var height = 0f
     var gravity = Gravity.RIGHT
 
+    var paddingLeft = 200f
+    var paddingRight = 20f
+
     val sections: List<String> by lazy {
         val list = ArrayList<String>()
-        "#abcdefGHIJKLmnopqrSTUVWXyz".forEach { list.add(it.toString()) }
+        "#ABCDEFGHIJKLMNOPQRSTUVWXYZ".forEach { list.add(it.toString()) }
         return@lazy list
     }
 
-    var section = UNSELECTED
+    var selected = UNSELECTED
 
-    fun changeSize(w : Int, h : Int, selectedTextSize : Float) {
+    fun changeSize(w: Int, h: Int, selectedTextSize: Float) {
         val sectionCount = sections.size
-        width = selectedTextSize
+        width = selectedTextSize + paddingLeft + paddingRight
         height = h / sectionCount.toFloat()
 
         when (gravity) {
-            Gravity.LEFT -> offsetX = 0f
-            Gravity.START -> offsetX = 0f
-            Gravity.RIGHT -> offsetX = w - width
-            Gravity.END -> offsetX = w - width
+            Gravity.LEFT -> left = 0f
+            Gravity.START -> left = 0f
+            Gravity.RIGHT -> left = w - width
+            Gravity.END -> left = w - width
         }
 
-        offsetY = height
+        top = height
     }
 
     fun contains(x: Float, y: Float): Boolean {
-        return x >= offsetX &&
-                x <= offsetX + width &&
-                y >= offsetY &&
+        return x >= left &&
+                x <= left + width &&
+                y >= top &&
                 y <= height * sections.size
     }
 }
