@@ -84,12 +84,13 @@ class WildScrollRecyclerView : RecyclerView {
 
             fastScroll.sections = sections//FIXME
             val posX = sections.left + sections.paddingLeft
-            sections.sections.forEachIndexed { index, section ->
+
+            sections.sections.entries.forEachIndexed { index, section ->
                 val top = sections.top + (index + 1) * sections.height - sections.height / 2
 
                 when (sections.selected == index) {
-                    true -> canvas.drawText(section, posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
-                    false -> canvas.drawText(section, posX, top + textPaint.textSize / 2, textPaint)
+                    true -> canvas.drawText(section.key, posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
+                    false -> canvas.drawText(section.key, posX, top + textPaint.textSize / 2, textPaint)
                 }
             }
         }

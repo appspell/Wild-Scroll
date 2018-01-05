@@ -1,5 +1,6 @@
 package com.appspell.wildscroll
 
+import android.support.v4.util.ArrayMap
 import android.view.Gravity
 
 class Sections(val recyclerView: WildScrollRecyclerView) {
@@ -17,7 +18,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     var paddingLeft = 200f
     var paddingRight = 20f
 
-    lateinit var sections: List<String>
+    lateinit var sections: ArrayMap<String, Int>
 
     var selected = UNSELECTED
 
@@ -45,6 +46,14 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
                 y <= height * sections.size
     }
 
+
+    fun getSectionByIndex(index: Int): String = sections.keyAt(index)
+
+    fun getSectionPositionByIndex(index: Int): Int? {
+        val key = getSectionByIndex(index)
+        return sections[key]
+    }
+
     fun refreshSections() {
         if (recyclerView.adapter == null) {
             return
@@ -53,14 +62,20 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
             return
         }
 
-        val list = ArrayList<String>()
+        val map = ArrayMap<String, Int>()
 
         val adapter = recyclerView.adapter as SectionFastScroll
 
         if (recyclerView.adapter.itemCount > 0) {
-            sections = (0..recyclerView.adapter.itemCount - 1)
-                    .mapTo(list) { adapter.getSectionName(it)[0].toUpperCase().toString() }
-                    .distinct()
+            for (position in 0 until recyclerView.adapter.itemCount) {
+                val section = adapter.getSectionName(position)[0].toUpperCase().toString()
+                if (!map.contains(section)) {
+                    map.put(section, position)
+                }
+            }
+            sections = map
         }
     }
+
+
 }
