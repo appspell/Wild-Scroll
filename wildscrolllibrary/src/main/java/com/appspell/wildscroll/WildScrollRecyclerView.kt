@@ -2,7 +2,6 @@ package com.appspell.wildscroll
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
@@ -83,20 +82,7 @@ class WildScrollRecyclerView : RecyclerView {
         if (showSections) {
             canvas.drawRect(sectionsRect, sectionsPaint)
 
-            fastScroll.sections = sections
-            (0..height).forEachIndexed { index, i ->
-                val selection = fastScroll.getSelectionSectionIndex(index.toFloat())
-
-                val p = Paint()
-                if (selection % 2 == 0) {
-                    p.color = Color.RED
-                } else {
-                    p.color = Color.GREEN
-                }
-
-                canvas.drawLine(sections.left, index.toFloat(), sections.left + sections.width, index.toFloat(), p)
-            }
-
+            fastScroll.sections = sections//FIXME
             val posX = sections.left + sections.paddingLeft
             sections.sections.forEachIndexed { index, section ->
                 val top = sections.top + (index + 1) * sections.height - sections.height / 2
@@ -107,8 +93,6 @@ class WildScrollRecyclerView : RecyclerView {
                 }
             }
         }
-
-
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {

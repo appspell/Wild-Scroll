@@ -1,6 +1,5 @@
 package com.appspell.wildscroll
 
-import android.util.Log
 import android.view.MotionEvent
 
 class FastScroll(val recyclerView: WildScrollRecyclerView) {
@@ -12,7 +11,6 @@ class FastScroll(val recyclerView: WildScrollRecyclerView) {
             MotionEvent.ACTION_UP ->
                 if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
-                    Log.d("FASTSCROLL", "UP Scroll = $scroll")
                     recyclerView.smoothScrollToPosition(scroll)
                     recyclerView.invalidateSectionBar()
                     return true
@@ -21,7 +19,6 @@ class FastScroll(val recyclerView: WildScrollRecyclerView) {
             MotionEvent.ACTION_MOVE ->
                 if (sections!!.contains(ev.x, ev.y)) {
                     val scroll = getSectionScroll(ev.y)
-                    Log.d("FASTSCROLL", "Move Scroll = $scroll")
                     recyclerView.smoothScrollToPosition(scroll)
                     recyclerView.invalidateSectionBar()
                     return true
@@ -42,10 +39,6 @@ class FastScroll(val recyclerView: WildScrollRecyclerView) {
     private fun getSectionScroll(y: Float): Int {
         val scrollProgress = y / recyclerView.height
         val sectionIndex = getSelectionSectionIndex(y)
-
-        sections!!.selected = sectionIndex
-        Log.d("FASTSCROLL", "Selected = ${sections!!.sections[sections!!.selected]}")
-
 
         return (recyclerView.adapter.itemCount * scrollProgress).toInt()
     }
