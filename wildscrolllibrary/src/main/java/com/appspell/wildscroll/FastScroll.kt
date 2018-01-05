@@ -48,7 +48,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView) {
     }
 
     fun getSectionIndexByScrollPosition(itemPosition: Int): Int {
-        if (sections == null) return Sections.UNSELECTED
+        if (sections == null || recyclerView.adapter !is SectionFastScroll) return Sections.UNSELECTED
         val section = (recyclerView.adapter as SectionFastScroll).getSectionName(itemPosition)[0].toUpperCase().toString() //TODO section name to letter
         return sections!!.sections.indexOfKey(section)
     }
