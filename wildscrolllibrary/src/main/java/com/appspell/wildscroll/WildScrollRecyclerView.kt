@@ -2,13 +2,13 @@ package com.appspell.wildscroll
 
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 
@@ -18,8 +18,8 @@ class WildScrollRecyclerView : RecyclerView {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val sections = Sections()
-    private val fastScroll = FastScroll()
+    private val sections = Sections(this)
+    private val fastScroll = FastScroll(this)
 
     private var showSections = true
     private val textPaint = Paint()
@@ -62,14 +62,12 @@ class WildScrollRecyclerView : RecyclerView {
         }
 
         with(sections) {
-            this.selected = 1
             this.paddingLeft = paddingLeft
             this.paddingRight = paddingRight
         }
 
         with(fastScroll) {
             this.sections = sections
-            this.recyclerView = this@WildScrollRecyclerView
         }
     }
 
@@ -78,28 +76,39 @@ class WildScrollRecyclerView : RecyclerView {
         super.onSizeChanged(width, height, oldw, oldh)
     }
 
-    override fun onDraw(c: Canvas?) {
-        super.onDraw(c)
-
-        Log.d("FASTSCROLL", "onDraw")
-    }
-
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
-
-        Log.d("FASTSCROLL", "Draw")
 
         canvas!!
         if (showSections) {
             canvas.drawRect(sectionsRect, sectionsPaint)
 
+            fastScroll.sections = sections
+            (0..height).forEachIndexed { index, i ->
+                val selection = fastScroll.getSelectionSectionIndex(index.toFloat())
+
+                val p = Paint()
+                if (selection % 2 == 0) {
+                    p.color = Color.RED
+                } else {
+                    p.color = Color.GREEN
+                }
+
+                canvas.drawLine(sections.left, index.toFloat(), sections.left + sections.width, index.toFloat(), p)
+            }
+
+            val posX = sections.left + sections.paddingLeft
             sections.sections.forEachIndexed { index, section ->
+                val top = sections.top + (index + 1) * sections.height - sections.height / 2
+
                 when (sections.selected == index) {
-                    true -> canvas.drawText(section, sections.left + sections.paddingLeft, sections.top + index * sections.height, textSelectedPaint)
-                    false -> canvas.drawText(section, sections.left + sections.paddingLeft, sections.top + index * sections.height, textPaint)
+                    true -> canvas.drawText(section, posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
+                    false -> canvas.drawText(section, posX, top + textPaint.textSize / 2, textPaint)
                 }
             }
         }
+
+
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
@@ -121,6 +130,11 @@ class WildScrollRecyclerView : RecyclerView {
     override fun setAdapter(adapter: Adapter<*>?) {
         adapter?.registerAdapterDataObserver(DataObserver())
         super.setAdapter(adapter)
+    }
+
+    override fun requestLayout() {
+        if (sections != null) sections.refreshSections() //TODO unfortunately sections could be null =(
+        super.requestLayout()
     }
 
     fun invalidateSectionBar() {
@@ -150,6 +164,7 @@ class WildScrollRecyclerView : RecyclerView {
 
     inner class DataObserver : AdapterDataObserver() {
         override fun onChanged() {
+            sections.refreshSections()
             refreshSectionsUI(width, height)
             super.onChanged()
         }

@@ -7,8 +7,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.appspell.wildscroll.data.Book
 
-class SampleAdapter : RecyclerView.Adapter<ListViewHolder>() {
-
+class SampleAdapter : RecyclerView.Adapter<ListViewHolder>(), SectionFastScroll {
     var items = emptyList<Book>()
         set(value) {
             field = value
@@ -24,6 +23,8 @@ class SampleAdapter : RecyclerView.Adapter<ListViewHolder>() {
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bind(items[position])
     }
+
+    override fun getSectionName(position: Int): String = items[position].title
 }
 
 class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
