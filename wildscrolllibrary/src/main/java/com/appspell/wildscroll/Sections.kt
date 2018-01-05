@@ -6,7 +6,7 @@ import android.view.Gravity
 class Sections(val recyclerView: WildScrollRecyclerView) {
 
     companion object {
-        const val UNSELECTED = -1;
+        const val UNSELECTED = -1
     }
 
     var left = 0f

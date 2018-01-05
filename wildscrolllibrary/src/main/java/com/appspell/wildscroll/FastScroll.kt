@@ -47,11 +47,16 @@ class FastScroll(val recyclerView: WildScrollRecyclerView) {
         smoothScrollToPosition(position!!)
     }
 
-    private fun smoothScrollToPosition(itemPosition: Int) {
+    fun getSectionIndexByScrollPosition(itemPosition: Int): Int {
+        if (sections == null) return Sections.UNSELECTED
+        val section = (recyclerView.adapter as SectionFastScroll).getSectionName(itemPosition)[0].toUpperCase().toString() //TODO section name to letter
+        return sections!!.sections.indexOfKey(section)
+    }
+
+    fun smoothScrollToPosition(itemPosition: Int) {
         smoothScroller.targetPosition = itemPosition
         recyclerView.layoutManager.startSmoothScroll(smoothScroller)
     }
-
 
     val smoothScroller = object : LinearSmoothScroller(recyclerView.context) {
         override fun getVerticalSnapPreference(): Int {

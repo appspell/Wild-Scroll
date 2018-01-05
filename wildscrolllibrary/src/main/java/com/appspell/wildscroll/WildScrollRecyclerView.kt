@@ -6,7 +6,9 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.support.v4.content.res.ResourcesCompat
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.AttributeSet
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
@@ -68,6 +70,23 @@ class WildScrollRecyclerView : RecyclerView {
         with(fastScroll) {
             this.sections = sections
         }
+
+        addOnScrollListener(object : OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+                val firstItemPosition = when (layoutManager) {
+                    is LinearLayoutManager -> (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    is StaggeredGridLayoutManager -> (layoutManager as StaggeredGridLayoutManager).findFirstVisibleItemPositions(null)[0]
+                    else -> RecyclerView.NO_POSITION
+                }
+
+                sections.selected = fastScroll.getSectionIndexByScrollPosition(firstItemPosition)
+            }
+
+            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
+                super.onScrollStateChanged(recyclerView, newState)
+            }
+        })
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldw: Int, oldh: Int) {
