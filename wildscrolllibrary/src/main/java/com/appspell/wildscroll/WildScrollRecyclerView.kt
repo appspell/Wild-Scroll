@@ -6,9 +6,7 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.StaggeredGridLayoutManager
 import android.util.AttributeSet
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
@@ -20,7 +18,7 @@ class WildScrollRecyclerView : RecyclerView {
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
     private val sections = Sections(this)
-    private val fastScroll = FastScroll(this)
+    private val fastScroll = FastScroll(this, sections)
 
     private var showSections = true
     private val textPaint = Paint()
@@ -70,23 +68,6 @@ class WildScrollRecyclerView : RecyclerView {
         with(fastScroll) {
             this.sections = sections
         }
-
-        addOnScrollListener(object : OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                val firstItemPosition = when (layoutManager) {
-                    is LinearLayoutManager -> (layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
-                    is StaggeredGridLayoutManager -> (layoutManager as StaggeredGridLayoutManager).findFirstVisibleItemPositions(null)[0]
-                    else -> RecyclerView.NO_POSITION
-                }
-
-                sections.selected = fastScroll.getSectionIndexByScrollPosition(firstItemPosition)
-            }
-
-            override fun onScrollStateChanged(recyclerView: RecyclerView?, newState: Int) {
-                super.onScrollStateChanged(recyclerView, newState)
-            }
-        })
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldw: Int, oldh: Int) {
@@ -98,7 +79,7 @@ class WildScrollRecyclerView : RecyclerView {
         super.draw(canvas)
 
         canvas!!
-        if (showSections) {
+        if (showSections && sections.getCount() > 0) {
             canvas.drawRect(sectionsRect, sectionsPaint)
 
             fastScroll.sections = sections//FIXME
@@ -108,8 +89,8 @@ class WildScrollRecyclerView : RecyclerView {
                 val top = sections.top + (index + 1) * sections.height - sections.height / 2
 
                 when (sections.selected == index) {
-                    true -> canvas.drawText(section.key, posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
-                    false -> canvas.drawText(section.key, posX, top + textPaint.textSize / 2, textPaint)
+                    true -> canvas.drawText(section.key.toString(), posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
+                    false -> canvas.drawText(section.key.toString(), posX, top + textPaint.textSize / 2, textPaint)
                 }
             }
         }
@@ -137,7 +118,7 @@ class WildScrollRecyclerView : RecyclerView {
     }
 
     override fun requestLayout() {
-        if (sections != null) sections.refreshSections() //TODO unfortunately sections could be null =(
+        if (sections != null) sections.refreshSections() //TODO unfortunately sections can be null =(
         super.requestLayout()
     }
 

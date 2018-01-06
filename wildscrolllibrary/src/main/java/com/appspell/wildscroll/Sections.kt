@@ -1,12 +1,21 @@
 package com.appspell.wildscroll
 
 import android.support.v4.util.ArrayMap
+import android.text.TextUtils
 import android.view.Gravity
+
+data class SectionInfo(val name: String,
+                       val shortName: Char,
+                       val position: Int,
+                       val count: Int)
 
 class Sections(val recyclerView: WildScrollRecyclerView) {
 
     companion object {
         const val UNSELECTED = -1
+
+        private const val SECTION_SHORT_NAME_EMPTY = '-'
+        private const val SECTION_SHORT_NAME_DIGITAL = '#'
     }
 
     var left = 0f
@@ -18,7 +27,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     var paddingLeft = 200f
     var paddingRight = 20f
 
-    lateinit var sections: ArrayMap<String, Int>
+    lateinit var sections: ArrayMap<Char, SectionInfo>
 
     var selected = UNSELECTED
 
@@ -35,8 +44,6 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
             Gravity.RIGHT -> left = w - width
             Gravity.END -> left = w - width
         }
-
-//        top = height
     }
 
     fun contains(x: Float, y: Float): Boolean {
@@ -47,12 +54,12 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     }
 
 
-    fun getSectionByIndex(index: Int): String = sections.keyAt(index)
-
-    fun getSectionPositionByIndex(index: Int): Int? {
+    fun getSectionInfoByIndex(index: Int): SectionInfo? {
         val key = getSectionByIndex(index)
         return sections[key]
     }
+
+    private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
 
     fun refreshSections() {
         if (recyclerView.adapter == null) {
@@ -62,20 +69,31 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
             return
         }
 
-        val map = ArrayMap<String, Int>()
+        val map = ArrayMap<Char, SectionInfo>()
 
         val adapter = recyclerView.adapter as SectionFastScroll
 
         if (recyclerView.adapter.itemCount > 0) {
             for (position in 0 until recyclerView.adapter.itemCount) {
-                val section = adapter.getSectionName(position)[0].toUpperCase().toString()
-                if (!map.contains(section)) {
-                    map.put(section, position)
+
+                val name = adapter.getSectionName(position)
+
+                val shortName = when {
+                    name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
+                    TextUtils.isDigitsOnly(name) -> SECTION_SHORT_NAME_DIGITAL //TODO add flag to collapse digital
+                    else -> createShortName(name)
                 }
+
+                val section =
+                        if (map.containsKey(shortName)) map[shortName]!!.copy(count = map[shortName]!!.count + 1)
+                        else SectionInfo(name, shortName, position, 1)
+
+                map.put(shortName, section)
+                sections = map
             }
-            sections = map
+
         }
     }
 
-
+    fun createShortName(name: String) = name[0].toUpperCase()
 }
