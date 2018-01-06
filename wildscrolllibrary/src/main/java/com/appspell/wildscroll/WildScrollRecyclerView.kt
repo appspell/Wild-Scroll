@@ -26,9 +26,7 @@ class WildScrollRecyclerView : RecyclerView {
     private val sectionsPaint = Paint()
     private val sectionsRect = Rect()
 
-
     init {
-
         val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
         val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
         val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.ripple_material_light, null) //FIXME
@@ -77,37 +75,37 @@ class WildScrollRecyclerView : RecyclerView {
 
     override fun draw(canvas: Canvas?) {
         super.draw(canvas)
+        drawSectionBar(canvas!!)
+    }
 
-        canvas!!
-        if (showSections && sections.getCount() > 0) {
-            canvas.drawRect(sectionsRect, sectionsPaint)
+    private fun drawSectionBar(canvas: Canvas) {
+        if (!showSections || sections.getCount() == 0) {
+            return
+        }
 
-            fastScroll.sections = sections//FIXME
-            val posX = sections.left + sections.paddingLeft
+        canvas.drawRect(sectionsRect, sectionsPaint)
 
-            sections.sections.entries.forEachIndexed { index, section ->
-                val top = sections.top + (index + 1) * sections.height - sections.height / 2
+        fastScroll.sections = sections//FIXME
+        val posX = sections.left + sections.paddingLeft
 
-                when (sections.selected == index) {
-                    true -> canvas.drawText(section.key.toString(), posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
-                    false -> canvas.drawText(section.key.toString(), posX, top + textPaint.textSize / 2, textPaint)
-                }
+        sections.sections.entries.forEachIndexed { index, section ->
+            val top = sections.top + (index + 1) * sections.height - sections.height / 2
+
+            when (sections.selected == index) {
+                true -> canvas.drawText(section.key.toString(), posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
+                false -> canvas.drawText(section.key.toString(), posX, top + textPaint.textSize / 2, textPaint)
             }
         }
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
-
-        fastScroll.sections = sections //TODO
         if (fastScroll.onTouchEvent(ev)) {
             return true
         }
-
         return super.onTouchEvent(ev)
     }
 
     override fun onInterceptTouchEvent(ev: MotionEvent): Boolean {
-        fastScroll.sections = sections //TODO
         return if (showSections && fastScroll.onInterceptTouchEvent(ev)) true
         else super.onInterceptTouchEvent(ev)
     }
