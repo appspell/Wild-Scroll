@@ -1,4 +1,4 @@
-package com.appspell.wildscroll
+package com.appspell.wildscroll.view
 
 import android.content.Context
 import android.graphics.Canvas
@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
+import com.appspell.wildscroll.fastscroll.FastScroll
+import com.appspell.wildscroll.fastscroll.Sections
 
 class WildScrollRecyclerView : RecyclerView {
 
@@ -61,6 +63,7 @@ class WildScrollRecyclerView : RecyclerView {
         with(sections) {
             this.paddingLeft = paddingLeft
             this.paddingRight = paddingRight
+            this.collapseDigital = false //FIXME
         }
 
         with(fastScroll) {
@@ -85,7 +88,6 @@ class WildScrollRecyclerView : RecyclerView {
 
         canvas.drawRect(sectionsRect, sectionsPaint)
 
-        fastScroll.sections = sections//FIXME
         val posX = sections.left + sections.paddingLeft
 
         sections.sections.entries.forEachIndexed { index, section ->

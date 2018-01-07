@@ -1,8 +1,10 @@
-package com.appspell.wildscroll
+package com.appspell.wildscroll.fastscroll
 
 import android.support.v4.util.ArrayMap
 import android.text.TextUtils
 import android.view.Gravity
+import com.appspell.wildscroll.adapter.SectionFastScroll
+import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 data class SectionInfo(val name: String,
                        val shortName: Char,
@@ -23,6 +25,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     var width = 0f
     var height = 0f
     var gravity = Gravity.RIGHT
+    var collapseDigital = true
 
     var paddingLeft = 200f
     var paddingRight = 20f
@@ -43,6 +46,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
             Gravity.START -> left = 0f
             Gravity.RIGHT -> left = w - width
             Gravity.END -> left = w - width
+        //TODO top / bottom
         }
     }
 
@@ -59,8 +63,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
         return sections[key]
     }
 
-    private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
-
+    //TODO do it background
     fun refreshSections() {
         if (recyclerView.adapter == null) {
             return
@@ -80,7 +83,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
 
                 val shortName = when {
                     name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
-                    TextUtils.isDigitsOnly(name) -> SECTION_SHORT_NAME_DIGITAL //TODO add flag to collapse digital
+                    collapseDigital && TextUtils.isDigitsOnly(name) -> SECTION_SHORT_NAME_DIGITAL
                     else -> createShortName(name)
                 }
 
@@ -96,4 +99,6 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     }
 
     fun createShortName(name: String) = name[0].toUpperCase()
+
+    private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
 }

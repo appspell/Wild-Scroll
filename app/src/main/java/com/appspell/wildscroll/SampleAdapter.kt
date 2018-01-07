@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.appspell.wildscroll.adapter.SectionFastScroll
 import com.appspell.wildscroll.data.Book
 
 class SampleAdapter : RecyclerView.Adapter<ListViewHolder>(), SectionFastScroll {

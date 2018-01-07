@@ -1,4 +1,4 @@
-package com.appspell.wildscroll
+package com.appspell.wildscroll.fastscroll
 
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.LinearSmoothScroller
@@ -6,6 +6,8 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.MotionEvent
+import com.appspell.wildscroll.adapter.SectionFastScroll
+import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 
 class FastScroll(val recyclerView: WildScrollRecyclerView,
@@ -13,7 +15,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
 
     var isScrolling = false
 
-    val scroller: OnScrollListener = object : OnScrollListener() {
+    private val scroller: OnScrollListener = object : OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
             if (isScrolling) {
