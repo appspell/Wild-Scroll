@@ -81,24 +81,25 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
 
                 val name = adapter.getSectionName(position)
 
-                val shortName = when {
-                    name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
-                    collapseDigital && TextUtils.isDigitsOnly(createShortName(name).toString()) -> SECTION_SHORT_NAME_DIGITAL
-                    else -> createShortName(name)
-                }
+                val shortName = createShortName(name)
 
-                val section =
+                val sectionInfo =
                         if (map.containsKey(shortName)) map[shortName]!!.copy(count = map[shortName]!!.count + 1)
                         else SectionInfo(name, shortName, position, 1)
 
-                map.put(shortName, section)
+                map.put(shortName, sectionInfo)
                 sections = map
             }
 
         }
     }
 
-    fun createShortName(name: String) = name[0].toUpperCase()
+    fun createShortName(name: String): Char =
+            when {
+                name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
+                collapseDigital && TextUtils.isDigitsOnly(name[0].toString()) -> SECTION_SHORT_NAME_DIGITAL
+                else -> name[0].toUpperCase()
+            }
 
     private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
 }
