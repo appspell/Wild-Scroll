@@ -83,7 +83,7 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
 
                 val shortName = when {
                     name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
-                    collapseDigital && TextUtils.isDigitsOnly(name) -> SECTION_SHORT_NAME_DIGITAL
+                    collapseDigital && TextUtils.isDigitsOnly(createShortName(name).toString()) -> SECTION_SHORT_NAME_DIGITAL
                     else -> createShortName(name)
                 }
 

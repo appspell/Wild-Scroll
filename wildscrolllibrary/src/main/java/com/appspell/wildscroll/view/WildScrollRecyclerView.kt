@@ -63,7 +63,7 @@ class WildScrollRecyclerView : RecyclerView {
         with(sections) {
             this.paddingLeft = paddingLeft
             this.paddingRight = paddingRight
-            this.collapseDigital = false //FIXME
+            this.collapseDigital = true //FIXME
         }
 
         with(fastScroll) {
@@ -115,11 +115,6 @@ class WildScrollRecyclerView : RecyclerView {
     override fun setAdapter(adapter: Adapter<*>?) {
         adapter?.registerAdapterDataObserver(DataObserver())
         super.setAdapter(adapter)
-    }
-
-    override fun requestLayout() {
-        if (sections != null) sections.refreshSections() //TODO unfortunately sections can be null =(
-        super.requestLayout()
     }
 
     fun invalidateSectionBar() {
