@@ -48,7 +48,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
                     val sectionIndex = getSectionIndex(ev.y)
                     val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)
 
-                    smoothScrollToPosition(sectionInfo!!.position)
+                    scrollToPosition(sectionInfo!!.position) //TODO smooth scroll
 
                     sections.selected = sectionIndex
                     recyclerView.invalidateSectionBar()
