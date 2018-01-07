@@ -11,9 +11,15 @@ import android.view.MotionEvent
 class FastScroll(val recyclerView: WildScrollRecyclerView,
                  var sections: Sections) {
 
-    private val scroller = object : OnScrollListener() {
+    var isScrolling = false
+
+    val scroller: OnScrollListener = object : OnScrollListener() {
         override fun onScrolled(recyclerView: RecyclerView?, dx: Int, dy: Int) {
             super.onScrolled(recyclerView, dx, dy)
+            if (isScrolling) {
+                return
+            }
+
             val layoutManager = recyclerView!!.layoutManager
 
             val firstItemPosition = when (layoutManager) {
@@ -32,6 +38,9 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
         when (ev.action) {
+            MotionEvent.ACTION_DOWN ->
+                isScrolling = sections.contains(ev.x, ev.y)
+
             MotionEvent.ACTION_UP ->
                 if (sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
@@ -41,6 +50,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
 
                     sections.selected = sectionIndex
                     recyclerView.invalidateSectionBar()
+
                     return true
                 }
 
@@ -58,6 +68,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
 
                     sections.selected = sectionIndex
                     recyclerView.invalidateSectionBar()
+
                     return true
                 }
         }
@@ -81,12 +92,19 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
     }
 
     private fun scrollToPosition(itemPosition: Int) {
-        recyclerView.layoutManager.scrollToPosition(itemPosition)
+        when (recyclerView.layoutManager) {
+            is LinearLayoutManager ->
+                (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(itemPosition, 0)
+            else ->
+                recyclerView.layoutManager.scrollToPosition(itemPosition)
+        }
     }
 
     private fun smoothScrollToPosition(itemPosition: Int) {
         smoothScroller.targetPosition = itemPosition
-        recyclerView.layoutManager.startSmoothScroll(smoothScroller)
+        if (!smoothScroller.isRunning) {
+            recyclerView.layoutManager.startSmoothScroll(smoothScroller)
+        }
     }
 
     private val smoothScroller = object : LinearSmoothScroller(recyclerView.context) {
