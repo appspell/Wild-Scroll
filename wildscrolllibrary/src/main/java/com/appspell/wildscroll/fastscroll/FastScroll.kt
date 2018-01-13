@@ -21,16 +21,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
             if (isScrolling) {
                 return
             }
-
-            val layoutManager = recyclerView!!.layoutManager
-
-            val firstItemPosition = when (layoutManager) {
-                is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition()
-                is StaggeredGridLayoutManager -> layoutManager.findFirstVisibleItemPositions(null)[0]
-                else -> RecyclerView.NO_POSITION
-            }
-
-            sections.selected = getSectionIndexByAdapterItemPosition(firstItemPosition)
+            selectSectionByFirstVisibleItem()
         }
     }
 
@@ -81,13 +72,24 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
         return sections.contains(ev.x, ev.y)
     }
 
+    fun selectSectionByFirstVisibleItem() {
+        val layoutManager = recyclerView.layoutManager
+
+        val firstItemPosition = when (layoutManager) {
+            is LinearLayoutManager -> layoutManager.findFirstVisibleItemPosition()
+            is StaggeredGridLayoutManager -> layoutManager.findFirstVisibleItemPositions(null)[0]
+            else -> RecyclerView.NO_POSITION
+        }
+
+        sections.selected = getSectionIndexByAdapterItemPosition(firstItemPosition)
+    }
+
     private fun getSectionIndex(y: Float): Int {
-        if (sections == null) return Sections.UNSELECTED
         return Math.floor((y * sections.getCount() / recyclerView.height).toDouble()).toInt()
     }
 
     private fun getSectionIndexByAdapterItemPosition(itemPosition: Int): Int {
-        if (sections == null || recyclerView.adapter !is SectionFastScroll) return Sections.UNSELECTED
+        if (recyclerView.adapter !is SectionFastScroll) return Sections.UNSELECTED
         val sectionName = (recyclerView.adapter as SectionFastScroll).getSectionName(itemPosition)
         val sectionKey = sections.createShortName(sectionName)
         return sections.sections.indexOfKey(sectionKey)

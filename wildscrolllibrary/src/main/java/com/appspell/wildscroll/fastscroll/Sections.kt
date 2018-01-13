@@ -21,7 +21,7 @@ data class SectionInfo(val name: String,
                        val position: Int,
                        val count: Int)
 
-class Sections(val recyclerView: WildScrollRecyclerView) {
+class Sections(private val recyclerView: WildScrollRecyclerView) {
 
     companion object {
         const val UNSELECTED = -1
@@ -75,6 +75,13 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
         return sections[key]
     }
 
+    fun createShortName(name: String): Char =
+            when {
+                name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
+                collapseDigital && TextUtils.isDigitsOnly(name[0].toString()) -> SECTION_SHORT_NAME_DIGITAL
+                else -> name[0].toUpperCase()
+            }
+
     fun refresh(listener: OnSectionChangedListener) {
         job?.cancel()
         job = launch(Android) {
@@ -113,13 +120,6 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
             return@async map
         }
     }
-
-    fun createShortName(name: String): Char =
-            when {
-                name.isEmpty() -> SECTION_SHORT_NAME_EMPTY
-                collapseDigital && TextUtils.isDigitsOnly(name[0].toString()) -> SECTION_SHORT_NAME_DIGITAL
-                else -> name[0].toUpperCase()
-            }
 
     private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
 }

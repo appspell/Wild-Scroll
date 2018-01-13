@@ -118,8 +118,8 @@ class WildScrollRecyclerView : RecyclerView {
         super.setAdapter(adapter)
     }
 
-
     fun invalidateSectionBar() {
+        fastScroll.selectSectionByFirstVisibleItem()
         invalidate(sectionsRect)
     }
 
@@ -150,9 +150,8 @@ class WildScrollRecyclerView : RecyclerView {
         }
     }
 
-
     //Memory leaks (!)
-    val dataObserver = object : AdapterDataObserver() {
+    private val dataObserver = object : AdapterDataObserver() {
         override fun onChanged() {
             sections.refresh(object : OnSectionChangedListener {
                 override fun onSectionChanged() {
