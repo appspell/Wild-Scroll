@@ -11,6 +11,7 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.fastscroll.FastScroll
+import com.appspell.wildscroll.fastscroll.OnSectionChangedListener
 import com.appspell.wildscroll.fastscroll.Sections
 
 class WildScrollRecyclerView : RecyclerView {
@@ -72,7 +73,7 @@ class WildScrollRecyclerView : RecyclerView {
     }
 
     override fun onSizeChanged(width: Int, height: Int, oldw: Int, oldh: Int) {
-        refreshSectionsUI(width, height)
+        refreshSectionsBarView(width, height)
         super.onSizeChanged(width, height, oldw, oldh)
     }
 
@@ -113,15 +114,22 @@ class WildScrollRecyclerView : RecyclerView {
     }
 
     override fun setAdapter(adapter: Adapter<*>?) {
-        adapter?.registerAdapterDataObserver(DataObserver())
+        adapter?.registerAdapterDataObserver(dataObserver)
         super.setAdapter(adapter)
     }
+
 
     fun invalidateSectionBar() {
         invalidate(sectionsRect)
     }
 
-    private fun refreshSectionsUI(width: Int, height: Int) {
+    fun release() {
+        if (adapter != null) {
+            adapter.unregisterAdapterDataObserver(dataObserver)
+        }
+    }
+
+    private fun refreshSectionsBarView(width: Int, height: Int) {
         sections.changeSize(width, height, textSelectedPaint.textSize)
 
         if (sections.height > 0) {
@@ -142,10 +150,16 @@ class WildScrollRecyclerView : RecyclerView {
         }
     }
 
-    inner class DataObserver : AdapterDataObserver() {
+
+    //Memory leaks (!)
+    val dataObserver = object : AdapterDataObserver() {
         override fun onChanged() {
-            sections.refreshSections()
-            refreshSectionsUI(width, height)
+            sections.refresh(object : OnSectionChangedListener {
+                override fun onSectionChanged() {
+                    refreshSectionsBarView(width, height)
+                    invalidateSectionBar()
+                }
+            })
             super.onChanged()
         }
     }

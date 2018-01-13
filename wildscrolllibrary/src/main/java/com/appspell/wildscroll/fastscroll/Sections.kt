@@ -5,7 +5,17 @@ import android.text.TextUtils
 import android.view.Gravity
 import com.appspell.wildscroll.adapter.SectionFastScroll
 import com.appspell.wildscroll.view.WildScrollRecyclerView
+import com.eatigo.common.coroutines.Android
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.Job
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 
+interface OnSectionChangedListener {
+    fun onSectionChanged()
+
+}
 data class SectionInfo(val name: String,
                        val shortName: Char,
                        val position: Int,
@@ -30,9 +40,11 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
     var paddingLeft = 200f
     var paddingRight = 20f
 
-    lateinit var sections: ArrayMap<Char, SectionInfo>
+    var sections: ArrayMap<Char, SectionInfo> = ArrayMap()
 
     var selected = UNSELECTED
+
+    private var job: Job? = null
 
     fun getCount() = sections.size
 
@@ -63,34 +75,42 @@ class Sections(val recyclerView: WildScrollRecyclerView) {
         return sections[key]
     }
 
-    //TODO do it background
-    fun refreshSections() {
-        if (recyclerView.adapter == null) {
-            return
+    fun refresh(listener: OnSectionChangedListener) {
+        job?.cancel()
+        job = launch(Android) {
+            sections = fetchSections().await()
+            listener.onSectionChanged()
         }
-        if (recyclerView.adapter.itemCount <= 1 || recyclerView.adapter !is SectionFastScroll) {
-            return
-        }
+    }
 
-        val map = ArrayMap<Char, SectionInfo>()
+    private fun fetchSections(): Deferred<ArrayMap<Char, SectionInfo>> {
+        return async(CommonPool) {
+            val map = ArrayMap<Char, SectionInfo>()
 
-        val adapter = recyclerView.adapter as SectionFastScroll
-
-        if (recyclerView.adapter.itemCount > 0) {
-            for (position in 0 until recyclerView.adapter.itemCount) {
-
-                val name = adapter.getSectionName(position)
-
-                val shortName = createShortName(name)
-
-                val sectionInfo =
-                        if (map.containsKey(shortName)) map[shortName]!!.copy(count = map[shortName]!!.count + 1)
-                        else SectionInfo(name, shortName, position, 1)
-
-                map.put(shortName, sectionInfo)
-                sections = map
+            if (recyclerView.adapter == null) {
+                return@async map
+            }
+            if (recyclerView.adapter.itemCount <= 1 || recyclerView.adapter !is SectionFastScroll) {
+                return@async map
             }
 
+            val adapter = recyclerView.adapter as SectionFastScroll
+
+            if (recyclerView.adapter.itemCount > 0) {
+                for (position in 0 until recyclerView.adapter.itemCount) {
+
+                    val name = adapter.getSectionName(position)
+
+                    val shortName = createShortName(name)
+
+                    val sectionInfo =
+                            if (map.containsKey(shortName)) map[shortName]!!.copy(count = map[shortName]!!.count + 1)
+                            else SectionInfo(name, shortName, position, 1)
+
+                    map.put(shortName, sectionInfo)
+                }
+            }
+            return@async map
         }
     }
 
