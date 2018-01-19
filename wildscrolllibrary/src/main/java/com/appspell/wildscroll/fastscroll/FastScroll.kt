@@ -39,7 +39,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
             MotionEvent.ACTION_UP -> {
                 sectionPopup.dismiss()
 
-                if (sections.contains(ev.x, ev.y)) {
+                if (!isScrolling && sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
                     val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)
 
