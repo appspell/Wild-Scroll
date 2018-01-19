@@ -17,7 +17,7 @@ class SampleActivity : AppCompatActivity() {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = SampleAdapter()
-            (adapter as SampleAdapter).items = DataSource().books
+            (adapter as SampleAdapter).items = DataSource(resources).companies
         }
     }
 }

@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
+import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import appspell.com.wildscroll.R
@@ -50,11 +51,12 @@ open class SectionLetterPopupImpl(private val recyclerView: RecyclerView) : Sect
 
     init {
         val resources = recyclerView.context.resources
+        val theme = recyclerView.context.theme
 
-        background = resources.getDrawable(backgroudResource) //TODO
+        background = ResourcesCompat.getDrawable(resources, backgroudResource, theme)!!
         textPaint = Paint()
         with(textPaint) {
-            color = resources.getColor(sectionTextColor)
+            color = ResourcesCompat.getColor(resources, sectionTextColor, theme)
             isAntiAlias = true
             textSize = resources.getDimension(sectionTextSize)
             typeface = sectionTextTypeFace

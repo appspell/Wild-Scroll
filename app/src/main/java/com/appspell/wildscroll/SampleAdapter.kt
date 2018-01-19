@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.appspell.wildscroll.adapter.SectionFastScroll
-import com.appspell.wildscroll.data.Book
+import com.appspell.wildscroll.data.Company
 
 class SampleAdapter : RecyclerView.Adapter<ListViewHolder>(), SectionFastScroll {
-    var items = emptyList<Book>()
+    var items = emptyList<Company>()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -18,22 +18,25 @@ class SampleAdapter : RecyclerView.Adapter<ListViewHolder>(), SectionFastScroll 
     override fun getItemCount() = items.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder? {
-        return ListViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_sample_list, parent, false))
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.item_sample_list, parent, false)
+        return ListViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: ListViewHolder, position: Int) {
         holder.bind(items[position])
     }
 
-    override fun getSectionName(position: Int): String = items[position].title
+    override fun getSectionName(position: Int): String = items[position].company
 }
 
 class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val title: TextView = itemView.findViewById(R.id.title)
-    val author: TextView = itemView.findViewById(R.id.author)
+    private val company: TextView = itemView.findViewById(R.id.company)
+    private val phrase: TextView = itemView.findViewById(R.id.phrase)
+    private val street: TextView = itemView.findViewById(R.id.street)
 
-    fun bind(book: Book) {
-        title.text = book.title
-        author.text = book.author
+    fun bind(item: Company) {
+        company.text = item.company
+        phrase.text = item.phrase
+        street.text = item.street
     }
 }
