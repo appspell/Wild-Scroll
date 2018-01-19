@@ -8,11 +8,14 @@ import android.graphics.Typeface
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
+import android.view.Gravity
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.fastscroll.FastScroll
-import com.appspell.wildscroll.fastscroll.OnSectionChangedListener
-import com.appspell.wildscroll.fastscroll.Sections
+import com.appspell.wildscroll.sections.OnSectionChangedListener
+import com.appspell.wildscroll.sections.SectionLetterPopupImpl
+import com.appspell.wildscroll.sections.SectionPopup
+import com.appspell.wildscroll.sections.Sections
 
 class WildScrollRecyclerView : RecyclerView {
 
@@ -20,8 +23,15 @@ class WildScrollRecyclerView : RecyclerView {
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
 
-    private val sections = Sections(this)
-    private val fastScroll = FastScroll(this, sections)
+    var popupSection: SectionPopup
+        set(value) {
+            field = value
+            field.sections = sections
+            fastScroll.sectionPopup = field
+        }
+
+    private val sections: Sections
+    private val fastScroll: FastScroll
 
     private var showSections = true
     private val textPaint = Paint()
@@ -30,6 +40,10 @@ class WildScrollRecyclerView : RecyclerView {
     private val sectionsRect = Rect()
 
     init {
+        sections = Sections(this)
+        fastScroll = FastScroll(this, sections)
+        popupSection = SectionLetterPopupImpl(this)
+
         val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
         val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
         val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.ripple_material_light, null) //FIXME
@@ -65,9 +79,10 @@ class WildScrollRecyclerView : RecyclerView {
             this.paddingLeft = paddingLeft
             this.paddingRight = paddingRight
             this.collapseDigital = true //FIXME
+            this.gravity = Gravity.RIGHT
         }
 
-        with(fastScroll) {
+        with(popupSection) {
             this.sections = sections
         }
     }
@@ -94,11 +109,14 @@ class WildScrollRecyclerView : RecyclerView {
         sections.sections.entries.forEachIndexed { index, section ->
             val top = sections.top + (index + 1) * sections.height - sections.height / 2
 
+            //TODO implement gravity top or bottom
             when (sections.selected == index) {
                 true -> canvas.drawText(section.key.toString(), posX, top + textSelectedPaint.textSize / 2, textSelectedPaint)
                 false -> canvas.drawText(section.key.toString(), posX, top + textPaint.textSize / 2, textPaint)
             }
         }
+
+        popupSection.draw(canvas)
     }
 
     override fun onTouchEvent(ev: MotionEvent): Boolean {
@@ -150,7 +168,7 @@ class WildScrollRecyclerView : RecyclerView {
         }
     }
 
-    //Memory leaks (!)
+    //TODO Memory leaks (!?)
     private val dataObserver = object : AdapterDataObserver() {
         override fun onChanged() {
             sections.refresh(object : OnSectionChangedListener {

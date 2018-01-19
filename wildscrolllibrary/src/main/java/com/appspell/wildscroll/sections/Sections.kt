@@ -1,4 +1,4 @@
-package com.appspell.wildscroll.fastscroll
+package com.appspell.wildscroll.sections
 
 import android.support.v4.util.ArrayMap
 import android.text.TextUtils
@@ -16,6 +16,7 @@ interface OnSectionChangedListener {
     fun onSectionChanged()
 
 }
+
 data class SectionInfo(val name: String,
                        val shortName: Char,
                        val position: Int,
@@ -54,10 +55,8 @@ class Sections(private val recyclerView: WildScrollRecyclerView) {
         height = h / sectionCount.toFloat()
 
         when (gravity) {
-            Gravity.LEFT -> left = 0f
-            Gravity.START -> left = 0f
-            Gravity.RIGHT -> left = w - width
-            Gravity.END -> left = w - width
+            Gravity.START, Gravity.LEFT -> left = 0f
+            Gravity.END, Gravity.RIGHT -> left = w - width
         //TODO top / bottom
         }
     }

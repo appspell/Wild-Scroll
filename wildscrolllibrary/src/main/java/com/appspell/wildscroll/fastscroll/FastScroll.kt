@@ -7,12 +7,14 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.MotionEvent
 import com.appspell.wildscroll.adapter.SectionFastScroll
+import com.appspell.wildscroll.sections.SectionPopup
+import com.appspell.wildscroll.sections.Sections
 import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 
-class FastScroll(val recyclerView: WildScrollRecyclerView,
-                 var sections: Sections) {
-
+class FastScroll(private val recyclerView: WildScrollRecyclerView,
+                 private val sections: Sections) {
+    lateinit var sectionPopup: SectionPopup
     var isScrolling = false
 
     private val scroller: OnScrollListener = object : OnScrollListener() {
@@ -34,7 +36,9 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
             MotionEvent.ACTION_DOWN ->
                 isScrolling = sections.contains(ev.x, ev.y)
 
-            MotionEvent.ACTION_UP ->
+            MotionEvent.ACTION_UP -> {
+                sectionPopup.dismiss()
+
                 if (sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
                     val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)
@@ -46,7 +50,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
 
                     return true
                 }
-
+            }
             MotionEvent.ACTION_MOVE ->
                 if (sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
@@ -62,6 +66,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
                     sections.selected = sectionIndex
                     recyclerView.invalidateSectionBar()
 
+                    sectionPopup.show(sectionInfo, ev.x.toInt(), ev.y.toInt())
                     return true
                 }
         }
@@ -89,7 +94,7 @@ class FastScroll(val recyclerView: WildScrollRecyclerView,
     }
 
     private fun getSectionIndexByAdapterItemPosition(itemPosition: Int): Int {
-        if (recyclerView.adapter !is SectionFastScroll) return Sections.UNSELECTED
+        if (recyclerView.adapter !is SectionFastScroll || itemPosition == RecyclerView.NO_POSITION) return Sections.UNSELECTED
         val sectionName = (recyclerView.adapter as SectionFastScroll).getSectionName(itemPosition)
         val sectionKey = sections.createShortName(sectionName)
         return sections.sections.indexOfKey(sectionKey)
