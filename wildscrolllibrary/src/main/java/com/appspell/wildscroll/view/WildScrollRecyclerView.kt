@@ -42,7 +42,7 @@ class WildScrollRecyclerView : RecyclerView {
     init {
         sections = Sections(this)
         fastScroll = FastScroll(this, sections)
-        popupSection = SectionLetterPopupImpl(this)
+        popupSection = SectionLetterPopupImpl()
 
         val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
         val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
@@ -84,6 +84,7 @@ class WildScrollRecyclerView : RecyclerView {
 
         with(popupSection) {
             this.sections = sections
+            this.recyclerView = this@WildScrollRecyclerView
         }
     }
 
