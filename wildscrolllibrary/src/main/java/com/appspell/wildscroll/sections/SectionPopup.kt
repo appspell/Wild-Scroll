@@ -1,10 +1,13 @@
 package com.appspell.wildscroll.sections
 
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Paint.Align.CENTER
+import android.graphics.PorterDuff
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
+import android.support.annotation.ColorInt
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
@@ -30,9 +33,9 @@ class StubSectionPopup : SectionPopup {
     override var recyclerView: RecyclerView? = null
 }
 
-open class SectionLetterPopupImpl : SectionPopup {
+open class SectionLetterPopup : SectionPopup {
     @DrawableRes
-    var backgroudResource: Int = R.drawable.fastscroll_popup_background // TODO
+    var backgroudResource: Int = R.drawable.fastscroll_popup_round // TODO
     @DimenRes
     var sectionTextSize: Int = R.dimen.notification_action_icon_size //TODO
     @ColorRes
@@ -57,7 +60,7 @@ open class SectionLetterPopupImpl : SectionPopup {
             init()
         }
 
-    private fun init() {
+    protected open fun init() {
         val resources = recyclerView!!.context.resources
         val theme = recyclerView!!.context.theme
 
@@ -75,7 +78,7 @@ open class SectionLetterPopupImpl : SectionPopup {
         height = width
     }
 
-    override fun show(section: SectionInfo, x: Int, y: Int) {
+    override open fun show(section: SectionInfo, x: Int, y: Int) {
         if (recyclerView == null || sections == null) {
             return
         }
@@ -105,18 +108,36 @@ open class SectionLetterPopupImpl : SectionPopup {
 
     override fun draw(canvas: Canvas) {
         if (!isShowing) return
+        drawBackground(canvas)
+        drawText(canvas)
+    }
+
+    override fun dismiss() {
+        isShowing = false
+    }
+
+    protected open fun drawBackground(canvas: Canvas) {
         background?.setBounds(x, y, x + width, y + height)
         background?.draw(canvas)
+    }
 
+    protected open fun drawText(canvas: Canvas) {
         val offset = ((textPaint.descent() + textPaint.ascent()) / 2f)
         canvas.drawText(sectionName,
                 x + width / 2f,
                 y + height / 2f - offset,
                 textPaint)
-
     }
+}
 
-    override fun dismiss() {
-        isShowing = false
+class SectionCirclePopup : SectionLetterPopup() {
+
+    @ColorInt
+    val backgroundColor = Color.parseColor("#3100ff00") //TODO
+
+    override fun init() {
+        backgroudResource = R.drawable.fastscroll_popup_round
+        super.init()
+        background?.mutate()?.setColorFilter(backgroundColor, PorterDuff.Mode.SRC_IN)
     }
 }

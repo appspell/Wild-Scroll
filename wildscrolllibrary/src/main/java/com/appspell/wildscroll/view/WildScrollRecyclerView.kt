@@ -13,7 +13,7 @@ import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.fastscroll.FastScroll
 import com.appspell.wildscroll.sections.OnSectionChangedListener
-import com.appspell.wildscroll.sections.SectionLetterPopupImpl
+import com.appspell.wildscroll.sections.SectionCirclePopup
 import com.appspell.wildscroll.sections.SectionPopup
 import com.appspell.wildscroll.sections.Sections
 
@@ -42,7 +42,7 @@ class WildScrollRecyclerView : RecyclerView {
     init {
         sections = Sections(this)
         fastScroll = FastScroll(this, sections)
-        popupSection = SectionLetterPopupImpl()
+        popupSection = SectionCirclePopup()
 
         val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
         val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
