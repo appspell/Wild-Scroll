@@ -7,8 +7,8 @@ import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.support.v7.widget.StaggeredGridLayoutManager
 import android.view.MotionEvent
 import com.appspell.wildscroll.adapter.SectionFastScroll
-import com.appspell.wildscroll.sections.SectionPopup
 import com.appspell.wildscroll.sections.Sections
+import com.appspell.wildscroll.sections.popup.SectionPopup
 import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 

@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Rect
 import android.graphics.Typeface
+import android.support.annotation.ColorRes
 import android.support.v4.content.res.ResourcesCompat
 import android.support.v7.widget.RecyclerView
 import android.util.AttributeSet
@@ -13,15 +14,36 @@ import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.fastscroll.FastScroll
 import com.appspell.wildscroll.sections.OnSectionChangedListener
-import com.appspell.wildscroll.sections.SectionCirclePopup
-import com.appspell.wildscroll.sections.SectionPopup
 import com.appspell.wildscroll.sections.Sections
+import com.appspell.wildscroll.sections.popup.SectionCirclePopup
+import com.appspell.wildscroll.sections.popup.SectionPopup
 
 class WildScrollRecyclerView : RecyclerView {
 
     constructor(context: Context) : this(context, null)
     constructor(context: Context, attrs: AttributeSet?) : this(context, attrs, 0)
     constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+
+    @ColorRes
+    var sectionTextColor = R.color.fastscroll_default_text
+        set(value) {
+            field = value
+            textPaint.color = ResourcesCompat.getColor(context.resources, value, context.theme)
+        }
+
+    @ColorRes
+    var sectionHighlightColor = R.color.fastscroll_highlight_text
+        set(value) {
+            field = value
+            textSelectedPaint.color = ResourcesCompat.getColor(context.resources, value, context.theme)
+        }
+
+    @ColorRes
+    var sectionBackgroundColor = R.color.fastscroll_section_background
+        set(value) {
+            field = value
+            sectionsPaint.color = ResourcesCompat.getColor(context.resources, value, context.theme)
+        }
 
     var popupSection: SectionPopup
         set(value) {
@@ -44,9 +66,9 @@ class WildScrollRecyclerView : RecyclerView {
         fastScroll = FastScroll(this, sections)
         popupSection = SectionCirclePopup()
 
-        val textColor = ResourcesCompat.getColor(context.resources, R.color.primary_material_dark, null) //FIXME
-        val textSelectedColor = ResourcesCompat.getColor(context.resources, R.color.accent_material_dark, null) //FIXME
-        val backgroundColor = ResourcesCompat.getColor(context.resources, R.color.ripple_material_light, null) //FIXME
+        val textColor = ResourcesCompat.getColor(context.resources, sectionTextColor, context.theme) //FIXME
+        val textHighlightColor = ResourcesCompat.getColor(context.resources, sectionHighlightColor, context.theme) //FIXME
+        val backgroundColor = ResourcesCompat.getColor(context.resources, sectionBackgroundColor, context.theme) //FIXME
 
         val size = context.resources.getDimension(R.dimen.notification_action_text_size) //FIXME
         val selectedSize = context.resources.getDimension(R.dimen.notification_action_text_size)//FIXME
@@ -65,7 +87,7 @@ class WildScrollRecyclerView : RecyclerView {
         }
 
         with(textSelectedPaint) {
-            color = textSelectedColor
+            color = textHighlightColor
             isAntiAlias = true
             textSize = selectedSize
             typeface = textSelectedTypeFace
