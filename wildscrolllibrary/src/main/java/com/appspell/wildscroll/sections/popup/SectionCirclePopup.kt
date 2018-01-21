@@ -10,7 +10,7 @@ import appspell.com.wildscroll.R
 
 @SuppressLint("ResourceType")
 class SectionCirclePopup(@DimenRes
-                         sectionTextSize: Int = R.dimen.fastscroll_popup_section_text_default,
+                         sectionTextSize: Int = R.dimen.fastscroll_popup_section_text_size,
                          @ColorRes
                          sectionTextColor: Int = R.color.fastscroll_highlight_text,
                          @ColorInt

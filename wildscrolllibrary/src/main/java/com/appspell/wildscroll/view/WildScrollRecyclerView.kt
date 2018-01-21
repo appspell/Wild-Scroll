@@ -70,11 +70,11 @@ class WildScrollRecyclerView : RecyclerView {
         val textHighlightColor = ResourcesCompat.getColor(context.resources, sectionHighlightColor, context.theme) //FIXME
         val backgroundColor = ResourcesCompat.getColor(context.resources, sectionBackgroundColor, context.theme) //FIXME
 
-        val size = context.resources.getDimension(R.dimen.notification_action_text_size) //FIXME
-        val selectedSize = context.resources.getDimension(R.dimen.notification_action_text_size)//FIXME
+        val size = context.resources.getDimension(R.dimen.fastscroll_section_text_size) //FIXME
+        val selectedSize = context.resources.getDimension(R.dimen.fastscroll_section_highlight_text_size)//FIXME
 
-        val paddingLeft = context.resources.getDimension(R.dimen.abc_button_padding_horizontal_material)//FIXME
-        val paddingRight = context.resources.getDimension(R.dimen.abc_button_padding_horizontal_material)//FIXME
+        val paddingLeft = context.resources.getDimension(R.dimen.fastscroll_section_padding)//FIXME
+        val paddingRight = context.resources.getDimension(R.dimen.fastscroll_section_padding)//FIXME
 
         val textTypeFace = Typeface.DEFAULT
         val textSelectedTypeFace = Typeface.DEFAULT

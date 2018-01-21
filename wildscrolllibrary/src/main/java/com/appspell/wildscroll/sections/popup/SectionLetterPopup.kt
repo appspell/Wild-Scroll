@@ -18,7 +18,7 @@ import com.appspell.wildscroll.sections.Sections
 
 open class SectionLetterPopup(
         @DimenRes
-        var sectionTextSize: Int = R.dimen.fastscroll_popup_section_text_default,
+        var sectionTextSize: Int = R.dimen.fastscroll_popup_section_text_size,
         @ColorRes
         val sectionTextColor: Int = R.color.fastscroll_highlight_text,
         @DimenRes
