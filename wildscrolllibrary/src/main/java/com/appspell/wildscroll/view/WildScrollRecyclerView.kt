@@ -164,6 +164,10 @@ class WildScrollRecyclerView : RecyclerView {
         invalidate(sectionsRect)
     }
 
+    fun invalidateSectionPopup() {
+        invalidate(fastScroll.sectionPopup.getRect())
+    }
+
     fun release() {
         if (adapter != null) {
             adapter.unregisterAdapterDataObserver(dataObserver)

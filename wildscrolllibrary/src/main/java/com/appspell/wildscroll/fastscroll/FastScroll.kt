@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.HORIZONTAL
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.support.v7.widget.StaggeredGridLayoutManager
+import android.util.Log
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.adapter.SectionFastScroll
@@ -39,9 +40,8 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
     }
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
+        Log.d("TAG", "Action ${ev.action}")
         when (ev.action) {
-        //TODO cancel, out_, etc*
-
             MotionEvent.ACTION_DOWN -> {
                 recyclerView.parent.requestDisallowInterceptTouchEvent(false)
                 lastPositionX = ev.x

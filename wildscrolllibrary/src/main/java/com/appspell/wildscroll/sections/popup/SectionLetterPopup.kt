@@ -3,17 +3,18 @@ package com.appspell.wildscroll.sections.popup
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Paint.Align.CENTER
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
 import android.support.annotation.ColorRes
 import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.res.ResourcesCompat
-import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.sections.SectionInfo
 import com.appspell.wildscroll.sections.Sections
+import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 
 open class SectionLetterPopup(
@@ -39,7 +40,7 @@ open class SectionLetterPopup(
     protected var textPaint: Paint = Paint()
 
     override var sections: Sections? = null
-    override var recyclerView: RecyclerView? = null
+    override var recyclerView: WildScrollRecyclerView? = null
         set(value) {
             field = value
             init()
@@ -99,7 +100,10 @@ open class SectionLetterPopup(
 
     override fun dismiss() {
         isShowing = false
+        recyclerView?.invalidateSectionPopup()
     }
+
+    override fun getRect() = Rect(x, y, x + width, y + height)
 
     protected open fun drawBackground(canvas: Canvas) {
         background?.setBounds(x, y, x + width, y + height)
