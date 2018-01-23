@@ -1,4 +1,4 @@
-package com.appspell.wildscroll.fastscroll
+package com.appspell.wildscroll.sections.fastscroll
 
 import android.support.v7.widget.GridLayoutManager
 import android.support.v7.widget.LinearLayoutManager
@@ -7,21 +7,25 @@ import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.HORIZONTAL
 import android.support.v7.widget.RecyclerView.OnScrollListener
 import android.support.v7.widget.StaggeredGridLayoutManager
-import android.util.Log
 import android.view.MotionEvent
 import appspell.com.wildscroll.R
 import com.appspell.wildscroll.adapter.SectionFastScroll
+import com.appspell.wildscroll.sections.SectionBarView
 import com.appspell.wildscroll.sections.Sections
-import com.appspell.wildscroll.sections.popup.SectionPopup
-import com.appspell.wildscroll.view.WildScrollRecyclerView
 
 
-class FastScroll(private val recyclerView: WildScrollRecyclerView,
-                 private val sections: Sections) {
-    lateinit var sectionPopup: SectionPopup
-    protected var isScrolling = false
-    protected var lastPositionX = 0f
-    protected var lastPositionY = 0f
+class FastScroll(private val sectionBar: SectionBarView) {
+
+    private val sections
+        get() = sectionBar.sections
+
+    private val recyclerView
+        get() = sectionBar.recyclerView
+
+    private var isScrolling = false
+
+    private var lastPositionX = 0f
+    private var lastPositionY = 0f
     private val minScrollSensitivity: Float
 
     private val scroller: OnScrollListener = object : OnScrollListener() {
@@ -40,7 +44,6 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
     }
 
     fun onTouchEvent(ev: MotionEvent): Boolean {
-        Log.d("TAG", "Action ${ev.action}")
         when (ev.action) {
             MotionEvent.ACTION_DOWN -> {
                 recyclerView.parent.requestDisallowInterceptTouchEvent(false)
@@ -50,7 +53,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
             }
             MotionEvent.ACTION_UP -> {
                 recyclerView.parent.requestDisallowInterceptTouchEvent(false)
-                sectionPopup.dismiss()
+                sectionBar.dismissPopup()
 
                 if (!isScrolling && sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
@@ -59,7 +62,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
                     scrollToPosition(sectionInfo!!.position) //TODO smooth scroll
 
                     sections.selected = sectionIndex
-                    recyclerView.invalidateSectionBar()
+                    sectionBar.invalidateSectionBar()
 
                     return true
                 }
@@ -84,9 +87,9 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
                     scrollToPosition(position)
 
                     sections.selected = sectionIndex
-                    recyclerView.invalidateSectionBar()
+                    sectionBar.invalidateSectionBar()
 
-                    sectionPopup.show(sectionInfo, ev.x.toInt(), ev.y.toInt())
+                    sectionBar.showPopup(sectionInfo, ev.x.toInt(), ev.y.toInt())
 
                     isScrolling = true
                     return true
@@ -94,7 +97,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
             }
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_OUTSIDE -> {
                 recyclerView.parent.requestDisallowInterceptTouchEvent(false)
-                sectionPopup.dismiss()
+                sectionBar.dismissPopup()
                 return true
             }
         }
@@ -117,9 +120,11 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
         sections.selected = getSectionIndexByAdapterItemPosition(firstItemPosition)
     }
 
-    private fun getSectionIndex(y: Float): Int {
-        return Math.floor((y * sections.getCount() / recyclerView.height).toDouble()).toInt()
-    }
+    private fun getSectionIndex(pos: Float): Int =
+            when (isHorizontalScroll()) {
+                true -> Math.floor((pos * sections.getCount() / sectionBar.width).toDouble()).toInt()
+                false -> Math.floor((pos * sections.getCount() / sectionBar.height).toDouble()).toInt()
+            }
 
     private fun getSectionIndexByAdapterItemPosition(itemPosition: Int): Int {
         if (recyclerView.adapter !is SectionFastScroll || itemPosition == RecyclerView.NO_POSITION) return Sections.UNSELECTED
@@ -129,6 +134,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
     }
 
     private fun scrollToPosition(itemPosition: Int) {
+        recyclerView.stopScroll()
         when (recyclerView.layoutManager) {
             is LinearLayoutManager ->
                 (recyclerView.layoutManager as LinearLayoutManager).scrollToPositionWithOffset(itemPosition, 0)
@@ -138,6 +144,7 @@ class FastScroll(private val recyclerView: WildScrollRecyclerView,
     }
 
     private fun smoothScrollToPosition(itemPosition: Int) {
+        recyclerView.stopScroll()
         smoothScroller.targetPosition = itemPosition
         if (!smoothScroller.isRunning) {
             recyclerView.layoutManager.startSmoothScroll(smoothScroller)

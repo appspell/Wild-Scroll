@@ -1,10 +1,10 @@
 package com.appspell.wildscroll.sections
 
 import android.support.v4.util.ArrayMap
+import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import android.view.Gravity
 import com.appspell.wildscroll.adapter.SectionFastScroll
-import com.appspell.wildscroll.view.WildScrollRecyclerView
 import com.eatigo.common.coroutines.Android
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
@@ -14,7 +14,6 @@ import kotlinx.coroutines.experimental.launch
 
 interface OnSectionChangedListener {
     fun onSectionChanged()
-
 }
 
 data class SectionInfo(val name: String,
@@ -22,8 +21,7 @@ data class SectionInfo(val name: String,
                        val position: Int,
                        val count: Int)
 
-class Sections(private val recyclerView: WildScrollRecyclerView) {
-
+class Sections {
     companion object {
         const val UNSELECTED = -1
 
@@ -35,23 +33,24 @@ class Sections(private val recyclerView: WildScrollRecyclerView) {
     var top = 0f
     var width = 0f
     var height = 0f
+
     var gravity = Gravity.RIGHT
     var collapseDigital = true
 
-    var paddingLeft = 200f
-    var paddingRight = 20f
+    var paddingLeft = 0f
+    var paddingRight = 0f
 
     var sections: ArrayMap<Char, SectionInfo> = ArrayMap()
 
-    var selected = UNSELECTED
+    var selected = UNSELECTED //TODO redraw section bar after set new value
 
     private var job: Job? = null
 
     fun getCount() = sections.size
 
-    fun changeSize(w: Int, h: Int, selectedTextSize: Float) {
+    fun changeSize(w: Int, h: Int, highlightTextSize: Float) {
         val sectionCount = sections.size
-        width = selectedTextSize + paddingLeft + paddingRight
+        width = highlightTextSize + paddingLeft + paddingRight
         height = h / sectionCount.toFloat()
 
         when (gravity) {
@@ -81,29 +80,27 @@ class Sections(private val recyclerView: WildScrollRecyclerView) {
                 else -> name[0].toUpperCase()
             }
 
-    fun refresh(listener: OnSectionChangedListener) {
+    fun refresh(adapter: RecyclerView.Adapter<*>?, listener: OnSectionChangedListener) { //TODO move it to separate class
         job?.cancel()
         job = launch(Android) {
-            sections = fetchSections().await()
+            sections = fetchSections(adapter).await()
             listener.onSectionChanged()
         }
     }
 
-    private fun fetchSections(): Deferred<ArrayMap<Char, SectionInfo>> {
+    private fun fetchSections(adapter: RecyclerView.Adapter<*>?): Deferred<ArrayMap<Char, SectionInfo>> {
         return async(CommonPool) {
             val map = ArrayMap<Char, SectionInfo>()
 
-            if (recyclerView.adapter == null) {
+            if (adapter == null) {
                 return@async map
             }
-            if (recyclerView.adapter.itemCount <= 1 || recyclerView.adapter !is SectionFastScroll) {
+            if (adapter.itemCount <= 1 || adapter !is SectionFastScroll) {
                 return@async map
             }
 
-            val adapter = recyclerView.adapter as SectionFastScroll
-
-            if (recyclerView.adapter.itemCount > 0) {
-                for (position in 0 until recyclerView.adapter.itemCount) {
+            if (adapter.itemCount > 0) {
+                for (position in 0 until adapter.itemCount) {
 
                     val name = adapter.getSectionName(position)
 
@@ -120,5 +117,5 @@ class Sections(private val recyclerView: WildScrollRecyclerView) {
         }
     }
 
-    private fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
+    protected fun getSectionByIndex(index: Int): Char = sections.keyAt(index)
 }

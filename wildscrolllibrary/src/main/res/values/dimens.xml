@@ -7,5 +7,5 @@
 
     <dimen name="fastscroll_section_text_size">10sp</dimen>
     <dimen name="fastscroll_section_highlight_text_size">13sp</dimen>
-    <dimen name="fastscroll_section_padding">4dp</dimen>
+    <dimen name="fastscroll_section_padding">8dp</dimen>
 </resources>
