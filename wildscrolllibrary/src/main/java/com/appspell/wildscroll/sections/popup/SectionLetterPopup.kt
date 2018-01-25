@@ -12,20 +12,63 @@ import android.support.annotation.DimenRes
 import android.support.annotation.DrawableRes
 import android.support.v4.content.res.ResourcesCompat
 import appspell.com.wildscroll.R
+import com.appspell.wildscroll.sections.Sections
 
 
 open class SectionLetterPopup(
         protected var context: Context,
-        @DimenRes
-        var sectionTextSize: Int = R.dimen.fastscroll_popup_section_text_size,
         @ColorRes
-        val sectionTextColor: Int = R.color.fastscroll_highlight_text,
+        sectionTextColorRes: Int = R.color.fastscroll_highlight_text,
         @DimenRes
-        var padding: Int = R.dimen.fastscroll_popup_padding,
+        sectionTextSizeDimen: Int = R.dimen.fastscroll_popup_section_text_size,
         var sectionTextTypeFace: Typeface = Typeface.DEFAULT,
         @DrawableRes
-        var backgroudResource: Int = R.drawable.fastscroll_popup_round
+        backgroundResource: Int = R.drawable.fastscroll_popup_round,
+        @DimenRes
+        paddingRes: Int = R.dimen.fastscroll_popup_padding
 ) : SectionPopup {
+
+    var sectionTextSizeDimen: Int = sectionTextSizeDimen
+        set(value) {
+            field = value
+            textPaint.textSize = context.resources.getDimension(value)
+        }
+
+    var sectionTextColorRes: Int = sectionTextColorRes
+        set(value) {
+            field = value
+            textPaint.color = ResourcesCompat.getColor(context.resources, value, context.theme)
+        }
+
+    var paddingRes: Int = paddingRes
+        set(value) {
+            field = value
+            padding = context.resources.getDimension(value)
+            measure(padding!!)
+        }
+
+    var padding: Float? = null
+        set(value) {
+            field = value
+            measure(value!!)
+        }
+
+    var sectionTextColor: Int? = null
+        set(value) {
+            textPaint.color = value!!
+        }
+
+    var sectionTextSize: Float? = null
+        set(value) {
+            textPaint.textSize = value!!
+            measure(padding)
+        }
+
+    var backgroundResource: Int = backgroundResource
+        set(value) {
+            field = value
+            background = ResourcesCompat.getDrawable(context.resources, value, context.theme)!!
+        }
 
     var isShowing = false
 
@@ -35,8 +78,8 @@ open class SectionLetterPopup(
     protected var background: Drawable? = null
     protected var textPaint: Paint = Paint()
 
-    override val width: Int
-    override val height: Int
+    override var width: Int = 0
+    override var height: Int = 0
 
     override var onDismissListener: (() -> Unit)? = null
 
@@ -44,26 +87,50 @@ open class SectionLetterPopup(
         val resources = context.resources
         val theme = context.theme
 
-        background = ResourcesCompat.getDrawable(resources, backgroudResource, theme)!!
+        background = ResourcesCompat.getDrawable(resources, backgroundResource, theme)!!
 
         textPaint.run {
-            color = ResourcesCompat.getColor(resources, sectionTextColor, theme)
-            isAntiAlias = true
-            textSize = resources.getDimension(sectionTextSize)
+            color = ResourcesCompat.getColor(resources, sectionTextColorRes, theme)
+            textSize = resources.getDimension(sectionTextSizeDimen)
             typeface = sectionTextTypeFace
+            isAntiAlias = true
             textAlign = CENTER
         }
 
-        width = (textPaint.textSize + resources.getDimension(padding)).toInt()
+        val padding = context.resources.getDimension(paddingRes)
+        measure(padding)
+    }
+
+    private fun measure(padding: Float?) {
+        val padding = padding ?: 0f
+        width = (textPaint.textSize + padding).toInt()
         height = width
     }
 
-    override fun show(section: String, x: Int, y: Int) {
+    override fun show(section: String, x: Int, y: Int, parentWidth: Int, parentHeight: Int, sections: Sections) {
         sectionName = section
         this.x = x
         this.y = y
 
         isShowing = true
+
+        when (sections.gravity) {
+            com.appspell.wildscroll.sections.Gravity.LEFT -> {
+                this.x = sections.width.toInt() + sections.width.toInt()
+                this.y = y - height / 2
+            }
+            com.appspell.wildscroll.sections.Gravity.RIGHT -> {
+                this.x = (sections.left - width).toInt() - sections.width.toInt()
+                this.y = y - height / 2
+            }
+        //TODO top / bottom
+        }
+
+        //corrections
+        if (this.x < 0) this.x = 0
+        else if (this.x > parentWidth - width) this.x = parentWidth - width
+        if (this.y < 0) this.y = 0
+        else if (this.y > parentHeight - height) this.y = parentHeight - height
     }
 
     override fun draw(canvas: Canvas) {

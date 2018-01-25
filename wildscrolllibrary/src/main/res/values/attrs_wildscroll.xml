@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="WildScroll">
+        <attr name="wildScroll_textColor" format="color" />
+        <attr name="wildScroll_textSize" format="dimension" />
+
+        <attr name="wildScroll_highlightColor" format="color" />
+        <attr name="wildScroll_highlightTextSize" format="dimension" />
+
+        <attr name="wildScroll_sectionBarBackgroundColor" format="color" />
+        <attr name="wildScroll_sectionBarPaddingLeft" format="dimension" />
+        <attr name="wildScroll_sectionBarPaddingRight" format="dimension" />
+        <attr name="wildScroll_sectionBarCollapseDigital" format="boolean" />
+        <attr name="wildScroll_sectionBarGravity" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+        </attr>
+        <attr name="wildScroll_sectionBarEnable" format="boolean" />
+
+        <attr name="wildScroll_popupEnable" format="boolean" />
+        <attr name="wildScroll_popupBackgroundDrawable" format="integer" />
+        <attr name="wildScroll_popupBackgroundColor" format="color" />
+        <attr name="wildScroll_popupPadding" format="dimension" />
+        <attr name="wildScroll_popupTextColor" format="color" />
+        <attr name="wildScroll_popupTextSize" format="dimension" />
+    </declare-styleable>
+
+</resources>

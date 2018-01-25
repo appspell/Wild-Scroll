@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="padding">8dp</dimen>
+    <dimen name="textRegular">12sp</dimen>
+    <dimen name="textHighlighted">16sp</dimen>
+    <dimen name="textPopup">42sp</dimen>
+</resources>

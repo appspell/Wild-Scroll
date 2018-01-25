@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="fastscroll_default_text">#616161</color>
-    <color name="fastscroll_highlight_text">#212121</color>
-    <color name="fastscroll_section_background">#10212121</color>
-    <color name="fastscroll_popup_background">#40212121</color>
+    <color name="fastscroll_default_text">#85000000</color>
+    <color name="fastscroll_highlight_text">#d9000000</color>
+    <color name="fastscroll_section_background">#0a000000</color>
+    <color name="fastscroll_popup_background">#34000000</color>
 </resources>
