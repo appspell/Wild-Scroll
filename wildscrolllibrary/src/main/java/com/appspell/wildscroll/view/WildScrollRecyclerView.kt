@@ -93,7 +93,7 @@ class WildScrollRecyclerView @JvmOverloads constructor(
             sectionBar.popupEnable = value
         }
     @DrawableRes
-    var popupBackgroundDrawable: Int = R.drawable.fastscroll_popup_round
+    var popupBackground: Int = R.drawable.fastscroll_background_popup
         set(value) {
             if (sectionBar.sectionPopup !is SectionLetterPopup) {
                 sectionBar.sectionPopup = SectionLetterPopup(context, backgroundResource = value)
@@ -102,7 +102,7 @@ class WildScrollRecyclerView @JvmOverloads constructor(
             }
         }
     @ColorRes
-    var popupBackgroundColor: Int = R.color.fastscroll_section_background
+    var popupBackgroundColor: Int = R.color.fastscroll_popup_background
         set(value) {
             if (sectionBar.sectionPopup is SectionCirclePopup) {
                 (sectionBar.sectionPopup as SectionCirclePopup).backgroundColorRes = value
@@ -158,7 +158,7 @@ class WildScrollRecyclerView @JvmOverloads constructor(
                 sectionBar.highlightTextSize = typedArray.getDimension(R.styleable.WildScroll_wildScroll_highlightTextSize, resources.getDimension(R.dimen.fastscroll_section_highlight_text_size))
 
                 // Section Bar main settings
-                sectionBar.sectionBarBackgroundColor = typedArray.getColor(R.styleable.WildScroll_wildScroll_sectionBarBackgroundColor, ResourcesCompat.getColor(resources, R.color.fastscroll_section_background, context.theme))
+                sectionBar.sectionBarBackgroundColor = typedArray.getColor(R.styleable.WildScroll_wildScroll_sectionBarBackgroundColor, ResourcesCompat.getColor(resources, R.color.fastscroll_transparent, context.theme))
                 sectionBar.sectionBarPaddingLeft = typedArray.getDimension(R.styleable.WildScroll_wildScroll_sectionBarPaddingLeft, resources.getDimension(R.dimen.fastscroll_section_padding))
                 sectionBar.sectionBarPaddingRight = typedArray.getDimension(R.styleable.WildScroll_wildScroll_sectionBarPaddingRight, resources.getDimension(R.dimen.fastscroll_section_padding))
                 sectionBarCollapseDigital = typedArray.getBoolean(R.styleable.WildScroll_wildScroll_sectionBarCollapseDigital, true)
@@ -176,7 +176,7 @@ class WildScrollRecyclerView @JvmOverloads constructor(
                 }
                 if (typedArray.hasValue(R.styleable.WildScroll_wildScroll_popupBackgroundDrawable)) {
                     if (sectionBar.sectionPopup is SectionLetterPopup) {
-                        (sectionBar.sectionPopup as SectionLetterPopup).backgroundResource = typedArray.getInt(R.styleable.WildScroll_wildScroll_popupBackgroundDrawable, R.drawable.fastscroll_popup_round)
+                        (sectionBar.sectionPopup as SectionLetterPopup).backgroundDrawable = typedArray.getDrawable(R.styleable.WildScroll_wildScroll_popupBackgroundDrawable)
                     }
                 }
                 if (typedArray.hasValue(R.styleable.WildScroll_wildScroll_popupBackgroundColor)) {

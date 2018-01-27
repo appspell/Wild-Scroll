@@ -17,25 +17,20 @@ class SectionCirclePopup(
         @DimenRes
         sectionTextSizeDimen: Int = R.dimen.fastscroll_popup_section_text_size,
         @ColorRes
-        backgroundColorRes: Int = R.color.fastscroll_section_background,
+        backgroundColorRes: Int = R.color.fastscroll_popup_background,
         @DimenRes
         paddingRes: Int = R.dimen.fastscroll_popup_padding)
     : SectionLetterPopup(context = context,
-        sectionTextColorRes = sectionTextColorRes,
-        sectionTextSizeDimen = sectionTextSizeDimen,
+        textColorRes = sectionTextColorRes,
+        textSizeDimen = sectionTextSizeDimen,
         backgroundResource = R.drawable.fastscroll_popup_circle,
         paddingRes = paddingRes) {
 
-    var backgroundColorRes: Int = backgroundColorRes
+    override var backgroundColorRes: Int = backgroundColorRes
         set(value) {
             field = value
             val color = ResourcesCompat.getColor(context.resources, value, context.theme)
             background?.mutate()?.setColorFilter(color, PorterDuff.Mode.SRC_IN)
-        }
-
-    var backgroundColor: Int? = null
-        set(value) {
-            background?.mutate()?.setColorFilter(value!!, PorterDuff.Mode.SRC_IN)
         }
 
     init {

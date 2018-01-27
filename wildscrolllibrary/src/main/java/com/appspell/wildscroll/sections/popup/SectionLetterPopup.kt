@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Paint.Align.CENTER
+import android.graphics.PorterDuff
 import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.Drawable
@@ -18,23 +19,23 @@ import com.appspell.wildscroll.sections.Sections
 open class SectionLetterPopup(
         protected var context: Context,
         @ColorRes
-        sectionTextColorRes: Int = R.color.fastscroll_highlight_text,
+        textColorRes: Int = R.color.fastscroll_highlight_text,
         @DimenRes
-        sectionTextSizeDimen: Int = R.dimen.fastscroll_popup_section_text_size,
-        var sectionTextTypeFace: Typeface = Typeface.DEFAULT,
+        textSizeDimen: Int = R.dimen.fastscroll_popup_section_text_size,
+        var textTypeFace: Typeface = Typeface.DEFAULT,
         @DrawableRes
-        backgroundResource: Int = R.drawable.fastscroll_popup_round,
+        backgroundResource: Int = R.drawable.fastscroll_background_popup,
         @DimenRes
         paddingRes: Int = R.dimen.fastscroll_popup_padding
 ) : SectionPopup {
 
-    var sectionTextSizeDimen: Int = sectionTextSizeDimen
+    var sectionTextSizeDimen: Int = textSizeDimen
         set(value) {
             field = value
             textPaint.textSize = context.resources.getDimension(value)
         }
 
-    var sectionTextColorRes: Int = sectionTextColorRes
+    var sectionTextColorRes: Int = textColorRes
         set(value) {
             field = value
             textPaint.color = ResourcesCompat.getColor(context.resources, value, context.theme)
@@ -70,6 +71,23 @@ open class SectionLetterPopup(
             background = ResourcesCompat.getDrawable(context.resources, value, context.theme)!!
         }
 
+    var backgroundDrawable: Drawable? = null
+        set(value) {
+            background = value
+        }
+
+    open var backgroundColorRes: Int = 0
+        set(value) {
+            field = value
+            val color = ResourcesCompat.getColor(context.resources, value, context.theme)
+            background?.mutate()?.setColorFilter(color, PorterDuff.Mode.SRC_IN)
+        }
+
+    var backgroundColor: Int? = null
+        set(value) {
+            background?.mutate()?.setColorFilter(value!!, PorterDuff.Mode.SRC_IN)
+        }
+
     var isShowing = false
 
     protected var x = 0
@@ -90,9 +108,9 @@ open class SectionLetterPopup(
         background = ResourcesCompat.getDrawable(resources, backgroundResource, theme)!!
 
         textPaint.run {
-            color = ResourcesCompat.getColor(resources, sectionTextColorRes, theme)
-            textSize = resources.getDimension(sectionTextSizeDimen)
-            typeface = sectionTextTypeFace
+            color = ResourcesCompat.getColor(resources, textColorRes, theme)
+            textSize = resources.getDimension(textSizeDimen)
+            typeface = textTypeFace
             isAntiAlias = true
             textAlign = CENTER
         }
