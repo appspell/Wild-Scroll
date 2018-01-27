@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.appspell.wildscroll.view.WildScrollRecyclerView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:wildScroll_textColor="@color/textSecondary"
+        app:wildScroll_textSize="@dimen/textRegular"
+        app:wildScroll_highlightColor="@color/colorPrimary"
+        app:wildScroll_highlightTextSize="@dimen/textHighlighted"
+        app:wildScroll_sectionBarPaddingLeft="@dimen/padding"
+        app:wildScroll_sectionBarPaddingRight="@dimen/padding"
+        app:wildScroll_sectionBarCollapseDigital="false"
+        app:wildScroll_popupBackgroundColor="@color/colorPrimary"
+        app:wildScroll_popupPadding="@dimen/padding"
+        app:wildScroll_popupTextColor="@color/colorPrimaryLight"
+        app:wildScroll_popupTextSize="@dimen/textPopup"
+        tools:listitem="@layout/item_sample_list" />
+
+</android.support.constraint.ConstraintLayout>

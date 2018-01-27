@@ -6,10 +6,9 @@ import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
 
 
-class DataSource(val resources: Resources) {
+class DataSource(private val resources: Resources) {
     val companies: List<Company>
         get() {
-
             val json = resources.openRawResource(R.raw.mockdata).bufferedReader().use { it.readText() }
 
             val listType = object : TypeToken<List<Company>>() {}.type

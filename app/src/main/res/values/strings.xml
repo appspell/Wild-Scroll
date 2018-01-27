@@ -3,4 +3,5 @@
     <string name="tab_simple">Simple</string>
     <string name="tab_custom_layout"> Layout</string>
     <string name="tab_custom_programmatically">Programmatically</string>
+    <string name="tab_sections">Sections</string>
 </resources>

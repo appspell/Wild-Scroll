@@ -9,20 +9,20 @@ import android.view.View
 import android.view.ViewGroup
 import com.appspell.wildscroll.R
 import com.appspell.wildscroll.R.layout
-import com.appspell.wildscroll.adapter.SampleAdapter
+import com.appspell.wildscroll.adapter.SectionsAdapter
 import com.appspell.wildscroll.data.DataSource
 
-class CustomLayoutFragment : Fragment() {
+class SectionsFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-            inflater.inflate(layout.fragment_custom, container, false)
+            inflater.inflate(layout.fragment_sections, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         val recyclerView = view.findViewById<RecyclerView>(R.id.list)
         with(recyclerView) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-            adapter = SampleAdapter()
-            (adapter as SampleAdapter).items = DataSource(resources).companies
+            adapter = SectionsAdapter()
+            (adapter as SectionsAdapter).items = DataSource(resources).companies
         }
     }
 }

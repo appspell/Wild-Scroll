@@ -9,5 +9,5 @@
     <color name="colorSecondaryLight">#E0F7FA</color>
     <color name="textPrimary">#d8000000</color>
     <color name="textSecondary">#82000000</color>
-    <color name="dividers">#07000000</color>
+    <color name="divider">#10000000</color>
 </resources>
