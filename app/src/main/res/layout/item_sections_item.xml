@@ -25,6 +25,7 @@
         android:background="@drawable/background_circle"
         android:gravity="center"
         android:textSize="24sp"
+        android:maxLength="1"
         android:textColor="@color/divider"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"

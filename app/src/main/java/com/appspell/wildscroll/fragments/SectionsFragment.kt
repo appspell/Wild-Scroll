@@ -22,7 +22,7 @@ class SectionsFragment : Fragment() {
         with(recyclerView) {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             adapter = SectionsAdapter()
-            (adapter as SectionsAdapter).items = DataSource(resources).companies
+            (adapter as SectionsAdapter).items = DataSource(resources).companies //TODO need to duplicate section items
         }
     }
 }

@@ -4,12 +4,14 @@ import android.support.v4.util.ArrayMap
 import android.support.v7.widget.RecyclerView
 import android.text.TextUtils
 import com.appspell.wildscroll.adapter.SectionFastScroll
+import com.appspell.wildscroll.adapter.SectionFastScrollAdapter
 import com.eatigo.common.coroutines.Android
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.Job
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import java.util.TreeMap
 
 interface OnSectionChangedListener {
     fun onSectionChanged()
@@ -92,7 +94,21 @@ class Sections {
         job?.cancel()
         job = launch(Android) {
             sections = fetchSections(adapter).await()
+//            prepareSectionsAdapter(adapter)
             listener.onSectionChanged()
+        }
+    }
+
+    private suspend fun prepareSectionsAdapter(adapter: RecyclerView.Adapter<*>?) {
+        if (adapter !is SectionFastScrollAdapter<*>) return
+        adapter.sections = prepareSectionInformationForAdapter().await()
+    }
+
+    private fun prepareSectionInformationForAdapter(): Deferred<Map<Int, SectionInfo>> {
+        return async(CommonPool) {
+            val map = TreeMap<Int, SectionInfo>()
+            sections.values.forEach { sectionInfo -> map.put(sectionInfo.position, sectionInfo) }
+            return@async map
         }
     }
 

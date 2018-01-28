@@ -7,10 +7,11 @@ import android.view.ViewGroup
 import android.widget.TextView
 import com.appspell.wildscroll.R
 import com.appspell.wildscroll.data.Company
+import com.appspell.wildscroll.sections.SectionInfo
 
-class SectionsAdapter : RecyclerView.Adapter<SectionViewHolder>(), SectionFastScroll {
-
+class SectionsAdapter : SectionFastScrollAdapter<RecyclerView.ViewHolder>(), SectionFastScroll {
     companion object {
+
         const val SECTION = 10
         const val ITEM = 20
     }
@@ -21,16 +22,16 @@ class SectionsAdapter : RecyclerView.Adapter<SectionViewHolder>(), SectionFastSc
             notifyDataSetChanged()
         }
 
+    override fun getItemCount(): Int = items.count()
+
     override fun getItemViewType(position: Int): Int =
-            if (position == 0 || getSectionName(position) != getSectionName(position - 1)) {
+            if (isSection(position)) {
                 SECTION
             } else {
                 ITEM
             }
 
-    override fun getItemCount() = items.size
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SectionViewHolder? =
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder? =
             when (viewType) {
                 SECTION -> {
                     val view = LayoutInflater.from(parent.context).inflate(R.layout.item_sections_section, parent, false)
@@ -43,44 +44,44 @@ class SectionsAdapter : RecyclerView.Adapter<SectionViewHolder>(), SectionFastSc
                 else -> null
             }
 
-    override fun onBindViewHolder(holder: SectionViewHolder, position: Int) {
-        holder.bind(items[position])
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (getItemViewType(position)) {
+            SECTION -> {
+                holder as SectionsSectionViewHolder
+                holder.bind(getSectionInfo(position)!!)
+            }
+            ITEM -> {
+                holder as SectionsItemViewHolder
+                holder.bind(items[position])
+            }
+            else -> throw Exception("Cannot find binding for ${getItemViewType(position)}")
+        }
+
     }
 
-    override fun getSectionName(position: Int): String = items[position].company.sectionName()
+    override fun getSectionName(position: Int): String = items[position].company
 }
 
-abstract class SectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    abstract fun bind(item: Company)
-}
 
-class SectionsSectionViewHolder(itemView: View) : SectionViewHolder(itemView) {
+class SectionsSectionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val section = itemView.findViewById<TextView>(R.id.section)
 
-    override fun bind(item: Company) {
-        section.text = item.company.sectionName()
+    fun bind(sectionInfo: SectionInfo) {
+        section.text = sectionInfo.shortName.toString()
     }
 }
 
-class SectionsItemViewHolder(itemView: View) : SectionViewHolder(itemView) {
+class SectionsItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private val section = itemView.findViewById<TextView>(R.id.section)
 
     private val company = itemView.findViewById<TextView>(R.id.company)
     private val phrase = itemView.findViewById<TextView>(R.id.phrase)
     private val street = itemView.findViewById<TextView>(R.id.street)
 
-    override fun bind(item: Company) {
-        section.text = item.company.sectionName()
+    fun bind(item: Company) {
+        section.text = item.company
         company.text = item.company
         phrase.text = item.phrase
         street.text = item.street
     }
 }
-
-private fun String.sectionName(): String =
-        if (this.isNotEmpty()) {
-            capitalize()[0].toString()
-        } else {
-            ""
-        }
-

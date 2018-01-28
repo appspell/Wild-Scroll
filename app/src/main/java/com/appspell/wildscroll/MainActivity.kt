@@ -10,7 +10,6 @@ import android.support.v4.view.ViewPager
 import android.support.v7.app.AppCompatActivity
 import com.appspell.wildscroll.fragments.CustomLayoutFragment
 import com.appspell.wildscroll.fragments.CustomProgrammaticallyFragment
-import com.appspell.wildscroll.fragments.SectionsFragment
 import com.appspell.wildscroll.fragments.SimpleFragment
 
 class SampleActivity : AppCompatActivity() {
@@ -34,7 +33,7 @@ internal class PagerAdapter(fm: FragmentManager, private val context: Context) :
                 0 -> SimpleFragment()
                 1 -> CustomLayoutFragment()
                 2 -> CustomProgrammaticallyFragment()
-                3 -> SectionsFragment()
+//                3 -> SectionsFragment()
                 else -> null
             }
 
@@ -43,11 +42,11 @@ internal class PagerAdapter(fm: FragmentManager, private val context: Context) :
                 0 -> context.getString(R.string.tab_simple)
                 1 -> context.getString(R.string.tab_custom_layout)
                 2 -> context.getString(R.string.tab_custom_programmatically)
-                3 -> context.getString(R.string.tab_sections)
+//                3 -> context.getString(R.string.tab_sections)
                 else -> null
             }
 
     override fun getCount(): Int {
-        return 4
+        return 3
     }
 }
