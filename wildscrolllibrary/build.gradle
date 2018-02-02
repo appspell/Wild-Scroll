@@ -1,6 +1,17 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'bintray-release'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.8.0'
+    }
+}
+
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.2"
@@ -35,4 +46,18 @@ dependencies {
 }
 repositories {
     mavenCentral()
+    jcenter()
+}
+
+publish {
+    userOrg = 'appspell'
+    groupId = 'com.appspell.wild-scroll'
+    artifactId = 'wild-scroll'
+    publishVersion = android.defaultConfig.versionName
+    desc = 'Android RecyclerView Fast Scroller'
+    website = 'https://github.com/appspell/Wild-Scroll'
+}
+
+tasks.withType(Javadoc).all {
+    enabled = false
 }
