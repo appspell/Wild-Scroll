@@ -1,6 +1,10 @@
 # wild-scroll
 Android RecyclerView Fast Scroller + Section bar
 
+![alt tag](https://i.imgur.com/sSCEVRf.gif)
+![alt tag](https://i.imgur.com/TNhTMZD.gif)
+![alt tag](https://i.imgur.com/26QFKMu.gif)
+
 Download
 --------
 
