@@ -53,7 +53,7 @@ class SampleAdapter : RecyclerView.Adapter<ViewHolder>(), SectionFastScroll {
 ```
 
 
-Set all available attributes in XML
+Set all available attributes in [XML](/app/src/main/res/layout/fragment_custom.xml)
 -----------------------------------
 
 ```xml
@@ -80,7 +80,7 @@ Set all available attributes in XML
 ```
 
 
-Configure in code
+Configure in [code](/app/src/main/java/com/appspell/wildscroll/fragments/CustomProgrammaticallyFragment.kt)
 -----------------
 
 ```Kotlin
@@ -116,13 +116,13 @@ Configure in code
 Section popups
 --------------
 
-You can set your custom popup or use one of included into the library.
+You can set your custom popup or use one of included into the library ones.
 
-`SectionLetterPopup` - This popup shows section name and can use custom background (`backgroundResource`).
+[`SectionLetterPopup`](/wildscrolllibrary/src/main/java/com/appspell/wildscroll/sections/popup/SectionLetterPopup.kt) - This popup shows section name and can use custom background (`backgroundResource`).
 
-`SectionCirclePopup` - Extends `SectionLetterPopup` but use prefedined round background.
+[`SectionCirclePopup`](/wildscrolllibrary/src/main/java/com/appspell/wildscroll/sections/popup/SectionLetterPopup.kt) - Extends `SectionLetterPopup` but use predefined round background.
 
-`StubSectionPopup` - It's just a stub. This popup can't be rendered.
+[`StubSectionPopup`](/wildscrolllibrary/src/main/java/com/appspell/wildscroll/sections/popup/SectionPopup.kt) - It's just a stub. This popup can't be rendered.
 
-If you want to implement your own section popup you should use interface `com.appspell.wildscroll.sections.popup.SectionPopup`.
+If you want to implement your own section popup you should use interface [`com.appspell.wildscroll.sections.popup.SectionPopup`](/wildscrolllibrary/src/main/java/com/appspell/wildscroll/sections/popup/SectionPopup.kt).
 
