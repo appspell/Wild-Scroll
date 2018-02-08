@@ -126,3 +126,44 @@ You can set your custom popup or use one of included into the library ones.
 
 If you want to implement your own section popup you should use interface [`com.appspell.wildscroll.sections.popup.SectionPopup`](/wildscrolllibrary/src/main/java/com/appspell/wildscroll/sections/popup/SectionPopup.kt).
 
+
+XML attributes
+--------------
+
+
+Section bar
+
+`wildScroll_sectionBarEnable` - show or hide section bar
+
+`wildScroll_sectionBarGravity` - section bar positon. (currently available: left and right)
+
+`wildScroll_textColor` - section text color
+
+`wildScroll_textSize` - section text size
+
+`wildScroll_highlightColor` - color for selected section
+
+`wildScroll_highlightTextSize` - text size for selected section
+
+`wildScroll_sectionBarBackgroundColor` - background color for section bar
+
+`wildScroll_sectionBarPaddingLeft` - left padding for section bar
+
+`wildScroll_sectionBarPaddingRight` - right padding for section bar
+
+`wildScroll_sectionBarCollapseDigital` - merge all of numeric sections into one (1..10 -> #)
+
+
+Popup 
+
+`wildScroll_popupEnable` - show or hide section popup
+
+`wildScroll_popupBackgroundDrawable` - popup background
+
+`wildScroll_popupBackgroundColor` - color for preselected background drawable (like *tint*)
+
+`wildScroll_popupPadding` - paddings for popup
+
+`wildScroll_popupTextColor` - section text color
+
+`wildScroll_popupTextSize` - section text size
