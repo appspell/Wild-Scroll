@@ -57,14 +57,13 @@ class FastScroll(private val sectionBar: SectionBarView) {
 
                 if (!isScrolling && sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
-                    val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)
-
-                    scrollToPosition(sectionInfo!!.position) //TODO smooth scroll
-
-                    sections.selected = sectionIndex
-                    sectionBar.invalidateSectionBar()
-
-                    return true
+                    if (sectionIndex >= 0 && sectionIndex < sections.getCount()) {
+                        val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)
+                        scrollToPosition(sectionInfo!!.position) //TODO smooth scroll
+                        sections.selected = sectionIndex
+                        sectionBar.invalidateSectionBar()
+                        return true
+                    }
                 }
             }
             MotionEvent.ACTION_MOVE -> {
@@ -77,22 +76,19 @@ class FastScroll(private val sectionBar: SectionBarView) {
 
                 if (dif && sections.contains(ev.x, ev.y)) {
                     val sectionIndex = getSectionIndex(ev.y)
-                    val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)!!
-
-                    val dY = ev.y - sections.height * sectionIndex
-                    val sectionProgress = dY / sections.height
-                    val dPosition = sectionInfo.count * sectionProgress
-                    val position = Math.round(sectionInfo.position + dPosition)
-
-                    scrollToPosition(position)
-
-                    sections.selected = sectionIndex
-                    sectionBar.invalidateSectionBar()
-
-                    sectionBar.showPopup(sectionInfo, ev.x.toInt(), ev.y.toInt())
-
-                    isScrolling = true
-                    return true
+                    if (sectionIndex >= 0 && sectionIndex < sections.getCount()) {
+                        val sectionInfo = sections.getSectionInfoByIndex(sectionIndex)!!
+                        val dY = ev.y - sections.height * sectionIndex
+                        val sectionProgress = dY / sections.height
+                        val dPosition = sectionInfo.count * sectionProgress
+                        val position = Math.round(sectionInfo.position + dPosition)
+                        scrollToPosition(position)
+                        sections.selected = sectionIndex
+                        sectionBar.invalidateSectionBar()
+                        sectionBar.showPopup(sectionInfo, ev.x.toInt(), ev.y.toInt())
+                        isScrolling = true
+                        return true
+                    }
                 }
             }
             MotionEvent.ACTION_CANCEL, MotionEvent.ACTION_OUTSIDE -> {
